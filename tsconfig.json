@@ -12,7 +12,8 @@
     "isolatedModules": true,
     "lib": ["ESNext"],
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "declaration": true
   },
   "include": ["src"]
 }

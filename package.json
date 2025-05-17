@@ -4,11 +4,12 @@
   "description": "An opinionated Discord bot framework where everything is a command.",
   "author": "Luca <hi@luc.rs> (https://luc.rs)",
   "version": "0.1.0",
-  "main": "src/main.ts",
+  "main": "dist/main.js",
   "type": "module",
   "license": "UNLICENSED",
+  "types": "src/main.ts",
   "scripts": {
-    "dev": "tsx watch src/main.ts"
+    "build": "tsc"
   },
   "dependencies": {
     "discord.js": "^14.19.3",
