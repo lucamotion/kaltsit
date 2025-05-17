@@ -17,18 +17,27 @@ export class Bot<
       throw new Error("DISCORD_TOKEN must be specified in .env!");
     }
 
+    const clientId = process.env.CLIENT_ID;
+    const isProduction = process.env.NODE_ENV === "production";
+    const devGuildId = process.env.DEVELOPMENT_GUILD_ID;
+
+    if (!clientId) {
+      throw new Error("CLIENT_ID must be specified in .env!");
+    } else if (!isProduction && !devGuildId) {
+      throw new Error(
+        "DEVELOPMENT_GUILD_ID must be specified in .env if NODE_ENV != 'production'!",
+      );
+    }
+
     this.once("ready", () => {
-      this.rest
-        .put(
-          Routes.applicationGuildCommands(
-            "1370607904532594758",
-            "1370605527435841596",
-          ),
-          { body: transformCommands(this.commandManager.getAllCommands()) },
-        )
-        .catch((e) => {
-          console.error(`Failed to PUT application commands:`, e);
-        });
+      const commands = transformCommands(this.commandManager.getAllCommands());
+      const commandRoute = isProduction
+        ? Routes.applicationCommands(clientId)
+        : Routes.applicationGuildCommands(clientId, devGuildId!);
+
+      this.rest.put(commandRoute, { body: commands }).catch((e) => {
+        console.error(`Failed to PUT application commands:`, e);
+      });
     });
 
     this.on("interactionCreate", async (interaction) => {
