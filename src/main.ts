@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { BaseCommand } from "./core/structs/BaseCommand.js";
 import { Bot } from "./core/structs/Bot.js";
 import { Command } from "./core/structs/Command.js";

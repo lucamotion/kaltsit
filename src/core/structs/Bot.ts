@@ -10,7 +10,13 @@ export class Bot<
 > extends Client {
   commandManager: CommandManager<Commands>;
 
-  public async connect(token: string): Promise<string> {
+  public async connect(): Promise<string> {
+    const token = process.env.DISCORD_TOKEN;
+
+    if (!token) {
+      throw new Error("DISCORD_TOKEN must be specified in .env!");
+    }
+
     this.once("ready", () => {
       this.rest
         .put(
