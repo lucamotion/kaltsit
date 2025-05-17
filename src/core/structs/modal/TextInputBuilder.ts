@@ -1,0 +1,11 @@
+import { TextInputBuilder as DjsTextInputBuilder } from "discord.js";
+import { Command } from "../Command.js";
+
+export class TextInputBuilder<
+  SourceCommand extends Command<string>,
+> extends DjsTextInputBuilder {
+  setCustomId(overwrites: SourceCommand["options"][number]["name"]) {
+    this.data.custom_id = overwrites;
+    return this;
+  }
+}

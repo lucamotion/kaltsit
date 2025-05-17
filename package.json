@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "name": "@lucamotion/texas",
+  "description": "An opinionated Discord bot framework where everything is a command.",
+  "author": "Luca <hi@luc.rs> (https://luc.rs)",
+  "version": "0.1.0",
+  "main": "src/main.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/main.ts"
+  },
+  "dependencies": {
+    "discord.js": "^14.19.3",
+    "neverthrow": "^8.2.0",
+    "typescript": "5.8.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.17",
+    "prettier": "^3.5.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "tsx": "^4.19.4"
+  }
+}
