@@ -6,8 +6,8 @@ import {
   ContextMutator,
   ParseOptionsInput,
 } from "../types/types.js";
-import { CommandContext } from "./CommandContext.js";
-import { CommandManager } from "./CommandManager.js";
+import { CommandContext } from "./commands/CommandContext.js";
+import { CommandManager } from "./commands/CommandManager.js";
 
 export class Bot<
   Commands extends ReadonlyArray<AnyCommand> = ReadonlyArray<AnyCommand>,

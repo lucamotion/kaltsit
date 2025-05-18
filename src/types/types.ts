@@ -1,9 +1,9 @@
 import { Ok, Result } from "neverthrow";
 import { CommandContext } from "../main.js";
-import { Command } from "../structs/Command.js";
-import { CommandWithSubcommandGroups } from "../structs/CommandWithSubcommandGroups.js";
-import { CommandWithSubcommands } from "../structs/CommandWithSubcommands.js";
-import { CommandOption } from "../structs/options/CommandOption.js";
+import { Command } from "../structs/commands/Command.js";
+import { CommandWithSubcommandGroups } from "../structs/commands/CommandWithSubcommandGroups.js";
+import { CommandWithSubcommands } from "../structs/commands/CommandWithSubcommands.js";
+import { CommandOption } from "../structs/commands/options/CommandOption.js";
 
 export type ContextMutator<SourceCommand extends Command<string>> = (
   context: CommandContext<SourceCommand>,

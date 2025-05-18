@@ -1,4 +1,4 @@
-import { AnyCommand } from "../types/types.js";
+import { AnyCommand } from "../../types/types.js";
 import { Command } from "./Command.js";
 import { CommandWithSubcommandGroups } from "./CommandWithSubcommandGroups.js";
 import { CommandWithSubcommands } from "./CommandWithSubcommands.js";

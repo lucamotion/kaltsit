@@ -1,5 +1,5 @@
 import { TextInputBuilder as DjsTextInputBuilder } from "discord.js";
-import { Command } from "../Command.js";
+import { Command } from "../commands/Command.js";
 
 export class TextInputBuilder<
   SourceCommand extends Command<string>,

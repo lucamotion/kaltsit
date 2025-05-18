@@ -1,13 +1,13 @@
 import "dotenv/config";
-import { BaseCommand } from "./structs/BaseCommand.js";
 import { Bot } from "./structs/Bot.js";
-import { Command } from "./structs/Command.js";
-import { CommandContext } from "./structs/CommandContext.js";
-import { CommandManager } from "./structs/CommandManager.js";
+import { BaseCommand } from "./structs/commands/BaseCommand.js";
+import { Command } from "./structs/commands/Command.js";
+import { CommandContext } from "./structs/commands/CommandContext.js";
+import { CommandManager } from "./structs/commands/CommandManager.js";
+import { CommandOption } from "./structs/commands/options/CommandOption.js";
+import { CommandStringOption } from "./structs/commands/options/StringOption.js";
 import { PermissionsError, TexasError } from "./structs/error/TexasError.js";
 import { TextInputBuilder } from "./structs/modal/TextInputBuilder.js";
-import { CommandOption } from "./structs/options/CommandOption.js";
-import { CommandStringOption } from "./structs/options/StringOption.js";
 import { SelectBuilder } from "./structs/select/SelectBuilder.js";
 import { ParseOptionsInput } from "./types/types.js";
 

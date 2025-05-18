@@ -4,9 +4,9 @@ import {
   RESTPostAPIChatInputApplicationCommandsJSONBody,
 } from "discord.js";
 import { err, ok, Result } from "neverthrow";
-import { Command } from "../structs/Command.js";
-import { CommandWithSubcommandGroups } from "../structs/CommandWithSubcommandGroups.js";
-import { CommandWithSubcommands } from "../structs/CommandWithSubcommands.js";
+import { Command } from "../structs/commands/Command.js";
+import { CommandWithSubcommandGroups } from "../structs/commands/CommandWithSubcommandGroups.js";
+import { CommandWithSubcommands } from "../structs/commands/CommandWithSubcommands.js";
 import {
   AnyCommand,
   CommandOptionsResult,

@@ -12,7 +12,7 @@ import {
   ModalSubmitInteraction,
   User,
 } from "discord.js";
-import { CommandOptionsResult } from "../types/types.js";
+import { CommandOptionsResult } from "../../types/types.js";
 import { Command } from "./Command.js";
 
 export class CommandContext<SourceCommand extends Command<string>> {
