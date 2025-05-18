@@ -1,7 +1,11 @@
 import { Client, ClientOptions, MessageFlags, Routes } from "discord.js";
 import { parseOptions, transformCommands } from "../lib/commands.js";
 import { Command, dataStore, TexasError } from "../main.js";
-import { AnyCommand, ParseOptionsInput } from "../types/types.js";
+import {
+  AnyCommand,
+  ContextMutator,
+  ParseOptionsInput,
+} from "../types/types.js";
 import { CommandContext } from "./CommandContext.js";
 import { CommandManager } from "./CommandManager.js";
 
@@ -9,6 +13,13 @@ export class Bot<
   Commands extends ReadonlyArray<AnyCommand> = ReadonlyArray<AnyCommand>,
 > extends Client {
   commandManager: CommandManager<Commands>;
+
+  private contextMutator: ContextMutator<Command<string>> | undefined;
+
+  public useContextMutator(mutator: ContextMutator<Command<string>>) {
+    this.contextMutator = mutator;
+    return this;
+  }
 
   public async connect(): Promise<string> {
     const token = process.env.DISCORD_TOKEN;
@@ -126,10 +137,11 @@ export class Bot<
         return;
       }
 
-      const commandContext = new CommandContext(
-        interaction,
-        parsedOptions.value,
-      );
+      let commandContext = new CommandContext(interaction, parsedOptions.value);
+
+      if (this.contextMutator) {
+        commandContext = await this.contextMutator(commandContext);
+      }
 
       for (const precondition of command.preconditions) {
         const result = await precondition(commandContext);

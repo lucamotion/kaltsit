@@ -5,6 +5,10 @@ import { CommandWithSubcommandGroups } from "../structs/CommandWithSubcommandGro
 import { CommandWithSubcommands } from "../structs/CommandWithSubcommands.js";
 import { CommandOption } from "../structs/options/CommandOption.js";
 
+export type ContextMutator<SourceCommand extends Command<string>> = (
+  context: CommandContext<SourceCommand>,
+) => Promise<CommandContext<SourceCommand>>;
+
 export type Precondition<SourceCommand extends Command<string>> = (
   ctx: CommandContext<SourceCommand>,
 ) => Promise<Result<true, Error>>;
