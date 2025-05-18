@@ -4,6 +4,7 @@ import { Bot } from "./structs/Bot.js";
 import { Command } from "./structs/Command.js";
 import { CommandContext } from "./structs/CommandContext.js";
 import { CommandManager } from "./structs/CommandManager.js";
+import { PermissionsError, TexasError } from "./structs/error/TexasError.js";
 import { TextInputBuilder } from "./structs/modal/TextInputBuilder.js";
 import { CommandOption } from "./structs/options/CommandOption.js";
 import { CommandStringOption } from "./structs/options/StringOption.js";
@@ -25,6 +26,8 @@ export {
   CommandManager,
   CommandOption,
   CommandStringOption,
+  PermissionsError,
   SelectBuilder,
+  TexasError,
   TextInputBuilder,
 };

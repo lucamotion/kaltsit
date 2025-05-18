@@ -1,6 +1,6 @@
 import { Client, ClientOptions, MessageFlags, Routes } from "discord.js";
 import { parseOptions, transformCommands } from "../lib/commands.js";
-import { Command, dataStore } from "../main.js";
+import { Command, dataStore, TexasError } from "../main.js";
 import { AnyCommand, ParseOptionsInput } from "../types/types.js";
 import { CommandContext } from "./CommandContext.js";
 import { CommandManager } from "./CommandManager.js";
@@ -30,6 +30,10 @@ export class Bot<
     }
 
     this.once("ready", () => {
+      console.log(
+        `Bot authenticated as ${this.user?.username}#${this.user?.discriminator}`,
+      );
+
       const commands = transformCommands(this.commandManager.getAllCommands());
       const commandRoute = isProduction
         ? Routes.applicationCommands(clientId)
@@ -126,6 +130,21 @@ export class Bot<
         interaction,
         parsedOptions.value,
       );
+
+      for (const precondition of command.preconditions) {
+        const result = await precondition(commandContext);
+
+        if (result.isErr()) {
+          const error = result.error;
+
+          if (error instanceof TexasError) {
+            await interaction.reply({ content: error.message });
+          }
+
+          return;
+        }
+      }
+
       await command.execute(commandContext);
     });
 

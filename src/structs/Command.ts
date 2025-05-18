@@ -3,6 +3,7 @@ import { dataStore } from "../main.js";
 import {
   MultiTransformer,
   ParseOptionsInput,
+  Precondition,
   SingleTransformer,
 } from "../types/types.js";
 import { BaseCommand } from "./BaseCommand.js";
@@ -15,6 +16,8 @@ export abstract class Command<Name extends string> extends BaseCommand<Name> {
     | CommandOption<string, boolean, SingleTransformer, undefined>
     | CommandOption<string, boolean, undefined, MultiTransformer>
   >;
+  abstract preconditions: Array<Precondition<Command<Name>>>;
+
   abstract execute(ctx: CommandContext<Command<Name>>): Promise<unknown>;
 
   constructor(name: Name) {
@@ -47,5 +50,10 @@ export abstract class Command<Name extends string> extends BaseCommand<Name> {
     }, 50000);
 
     return `${this.id}:${uuid}`;
+  }
+
+  public usePreconditions(precondition: Array<Precondition<Command<Name>>>) {
+    this.preconditions.push(...precondition);
+    return this;
   }
 }

@@ -1,8 +1,13 @@
 import { Ok, Result } from "neverthrow";
+import { CommandContext } from "../main.js";
 import { Command } from "../structs/Command.js";
 import { CommandWithSubcommandGroups } from "../structs/CommandWithSubcommandGroups.js";
 import { CommandWithSubcommands } from "../structs/CommandWithSubcommands.js";
 import { CommandOption } from "../structs/options/CommandOption.js";
+
+export type Precondition<SourceCommand extends Command<string>> = (
+  ctx: CommandContext<SourceCommand>,
+) => Promise<Result<true, Error>>;
 
 type Transformer<Input, Output extends Result<unknown, unknown>> =
   | ((value: Input) => Output)

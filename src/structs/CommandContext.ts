@@ -10,6 +10,7 @@ import {
   MessagePayload,
   ModalBuilder,
   ModalSubmitInteraction,
+  User,
 } from "discord.js";
 import { CommandOptionsResult } from "../types/types.js";
 import { Command } from "./Command.js";
@@ -23,6 +24,7 @@ export class CommandContext<SourceCommand extends Command<string>> {
     | ModalSubmitInteraction;
 
   public options: CommandOptionsResult<SourceCommand["options"]>;
+  public user: User;
 
   constructor(
     interaction:
@@ -36,6 +38,7 @@ export class CommandContext<SourceCommand extends Command<string>> {
     this.interaction = interaction;
 
     this.options = options;
+    this.user = interaction.user;
   }
 
   public async deferEdit() {
