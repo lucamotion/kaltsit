@@ -1,7 +1,7 @@
 import { Client, ClientOptions, MessageFlags, Routes } from "discord.js";
-import { parseOptions, transformCommands } from "../../lib/commands.js";
-import { Command, dataStore } from "../../main.js";
-import { AnyCommand, ParseOptionsInput } from "../../types/types.js";
+import { parseOptions, transformCommands } from "../lib/commands.js";
+import { Command, dataStore } from "../main.js";
+import { AnyCommand, ParseOptionsInput } from "../types/types.js";
 import { CommandContext } from "./CommandContext.js";
 import { CommandManager } from "./CommandManager.js";
 

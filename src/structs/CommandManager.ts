@@ -1,4 +1,4 @@
-import { AnyCommand } from "../../types/types.js";
+import { AnyCommand } from "../types/types.js";
 import { Command } from "./Command.js";
 import { CommandWithSubcommandGroups } from "./CommandWithSubcommandGroups.js";
 import { CommandWithSubcommands } from "./CommandWithSubcommands.js";
@@ -72,8 +72,6 @@ export class CommandManager<
     const groupName = commandPath[0];
     const subcommandName = commandPath[1];
     const commandName = commandPath[2];
-
-    console.log(`c: ${commandName}, s: ${subcommandName}, g: ${groupName}`);
 
     if (!groupName && !subcommandName) {
       return this.commandRecord[commandName] as Command<string>;

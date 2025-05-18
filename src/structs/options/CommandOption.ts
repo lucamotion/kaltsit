@@ -3,7 +3,7 @@ import {
   ApplicationCommandOptionBase,
   ApplicationCommandOptionType,
 } from "discord.js";
-import { MultiTransformer, SingleTransformer } from "../../../types/types.js";
+import { MultiTransformer, SingleTransformer } from "../../types/types.js";
 
 export class CommandOption<
   Name extends string,

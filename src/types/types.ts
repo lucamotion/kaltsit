@@ -1,8 +1,8 @@
 import { Ok, Result } from "neverthrow";
-import { Command } from "../core/structs/Command.js";
-import { CommandWithSubcommandGroups } from "../core/structs/CommandWithSubcommandGroups.js";
-import { CommandWithSubcommands } from "../core/structs/CommandWithSubcommands.js";
-import { CommandOption } from "../core/structs/options/CommandOption.js";
+import { Command } from "../structs/Command.js";
+import { CommandWithSubcommandGroups } from "../structs/CommandWithSubcommandGroups.js";
+import { CommandWithSubcommands } from "../structs/CommandWithSubcommands.js";
+import { CommandOption } from "../structs/options/CommandOption.js";
 
 type Transformer<Input, Output extends Result<unknown, unknown>> =
   | ((value: Input) => Output)

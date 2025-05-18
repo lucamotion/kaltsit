@@ -1,10 +1,10 @@
-import { generateCommandId } from "../../lib/ids.js";
-import { dataStore } from "../../main.js";
+import { generateCommandId } from "../lib/ids.js";
+import { dataStore } from "../main.js";
 import {
   MultiTransformer,
   ParseOptionsInput,
   SingleTransformer,
-} from "../../types/types.js";
+} from "../types/types.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { CommandContext } from "./CommandContext.js";
 import { CommandOption } from "./options/CommandOption.js";

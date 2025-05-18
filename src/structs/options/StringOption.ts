@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType } from "discord.js";
-import { MultiTransformer, SingleTransformer } from "../../../types/types.js";
+import { MultiTransformer, SingleTransformer } from "../../types/types.js";
 import { CommandOption } from "./CommandOption.js";
 
 export class CommandStringOption<
