@@ -1,12 +1,12 @@
 {
-  "private": true,
   "name": "@lucamotion/texas",
   "description": "An opinionated Discord bot framework where everything is a command.",
   "author": "Luca <hi@luc.rs> (https://luc.rs)",
   "version": "0.1.0",
-  "main": "dist/main.js",
-  "type": "module",
   "license": "UNLICENSED",
+  "private": true,
+  "type": "module",
+  "main": "src/main.ts",
   "types": "src/main.ts",
   "scripts": {
     "build": "tsc"
