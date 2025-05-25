@@ -1,3 +1,3 @@
 import { Command } from "./Command.js";
 
-export abstract class Subcommand<Name extends string> extends Command<Name> {}
+export abstract class Subcommand extends Command {}

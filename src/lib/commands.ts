@@ -57,7 +57,7 @@ export function transformCommands(
   });
 }
 
-export async function parseOptions<SourceCommand extends Command<string>>(
+export async function parseOptions<SourceCommand extends Command>(
   command: SourceCommand,
   options: ParseOptionsInput<SourceCommand>,
 ): Promise<Result<CommandOptionsResult<SourceCommand["options"]>, string>> {

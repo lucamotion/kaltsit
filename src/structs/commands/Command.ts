@@ -10,22 +10,22 @@ import { BaseCommand } from "./BaseCommand.js";
 import { CommandContext } from "./CommandContext.js";
 import { CommandOption } from "./options/CommandOption.js";
 
-export abstract class Command<Name extends string> extends BaseCommand<Name> {
+export abstract class Command extends BaseCommand {
   public id: string;
   abstract options: ReadonlyArray<
     | CommandOption<string, boolean, SingleTransformer, undefined>
     | CommandOption<string, boolean, undefined, MultiTransformer>
   >;
-  abstract preconditions: Array<Precondition<Command<Name>>>;
+  abstract preconditions: Array<Precondition<Command>>;
 
-  abstract execute(ctx: CommandContext<Command<Name>>): Promise<unknown>;
+  abstract execute(ctx: CommandContext<Command>): Promise<unknown>;
 
-  constructor(name: Name) {
-    super(name);
+  constructor() {
+    super();
     this.id = generateCommandId();
   }
 
-  public generateButtonCustomId<SourceCommand extends Command<Name>>(
+  public generateButtonCustomId<SourceCommand extends Command>(
     input: ParseOptionsInput<SourceCommand>,
   ): `${SourceCommand["id"]}:${string}` {
     const uuid = crypto.randomUUID();
@@ -38,7 +38,7 @@ export abstract class Command<Name extends string> extends BaseCommand<Name> {
     return `${this.id}:${uuid}`;
   }
 
-  public generateSelectCustomId<SourceCommand extends Command<Name>>(
+  public generateSelectCustomId<SourceCommand extends Command>(
     overwrites: Exclude<SourceCommand["options"][number]["name"], "overwrites">,
     input: ParseOptionsInput<SourceCommand>,
   ): `${SourceCommand["id"]}:${string}` {
@@ -52,7 +52,7 @@ export abstract class Command<Name extends string> extends BaseCommand<Name> {
     return `${this.id}:${uuid}`;
   }
 
-  public usePreconditions(precondition: Array<Precondition<Command<Name>>>) {
+  public usePreconditions(precondition: Array<Precondition<Command>>) {
     this.preconditions.push(...precondition);
     return this;
   }

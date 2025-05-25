@@ -1,8 +1,6 @@
 import { BaseCommand } from "./BaseCommand.js";
 import { Subcommand } from "./Subcommand.js";
 
-export abstract class CommandWithSubcommands<
-  Name extends string,
-> extends BaseCommand<Name> {
-  abstract commands: Array<Subcommand<string>>;
+export abstract class CommandWithSubcommands extends BaseCommand {
+  abstract commands: Array<Subcommand>;
 }

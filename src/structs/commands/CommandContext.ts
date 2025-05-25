@@ -15,7 +15,7 @@ import {
 import { CommandOptionsResult } from "../../types/types.js";
 import { Command } from "./Command.js";
 
-export class CommandContext<SourceCommand extends Command<string>> {
+export class CommandContext<SourceCommand extends Command> {
   private client: Client;
   private interaction:
     | ChatInputCommandInteraction

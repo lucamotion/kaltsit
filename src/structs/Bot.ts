@@ -1,22 +1,24 @@
-import { Client, ClientOptions, MessageFlags, Routes } from "discord.js";
+import { Client, type ClientOptions, MessageFlags, Routes } from "discord.js";
 import { parseOptions, transformCommands } from "../lib/commands.js";
-import { Command, dataStore, TexasError } from "../main.js";
+import { dataStore } from "../main.js";
 import {
-  AnyCommand,
-  ContextMutator,
-  ParseOptionsInput,
+  type AnyCommand,
+  type ContextMutator,
+  type ParseOptionsInput,
 } from "../types/types.js";
+import { type Command } from "./commands/Command.js";
 import { CommandContext } from "./commands/CommandContext.js";
-import { CommandManager } from "./commands/CommandManager.js";
+import { type CommandManager } from "./commands/CommandManager.js";
+import { KaltsitError } from "./error/KaltsitError.js";
 
 export class Bot<
   Commands extends ReadonlyArray<AnyCommand> = ReadonlyArray<AnyCommand>,
 > extends Client {
   commandManager: CommandManager<Commands>;
 
-  private contextMutator: ContextMutator<Command<string>> | undefined;
+  private contextMutator: ContextMutator<Command> | undefined;
 
-  public useContextMutator(mutator: ContextMutator<Command<string>>) {
+  public useContextMutator(mutator: ContextMutator<Command>) {
     this.contextMutator = mutator;
     return this;
   }
@@ -117,7 +119,7 @@ export class Bot<
           (record, option) => {
             return { ...record, [option.name]: option.value?.toString() };
           },
-          {} as ParseOptionsInput<Command<string>>,
+          {} as ParseOptionsInput<Command>,
         );
 
         rawOptions = interactionOptionsRecord;
@@ -149,7 +151,7 @@ export class Bot<
         if (result.isErr()) {
           const error = result.error;
 
-          if (error instanceof TexasError) {
+          if (error instanceof KaltsitError) {
             await interaction.reply({ content: error.message });
           }
 

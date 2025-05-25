@@ -22,7 +22,7 @@ export class CommandManager<
   private commands: Commands;
   private commandRecord: CommandRecord;
   private commandIdRecord: {
-    [key: string]: Command<string> | undefined;
+    [key: string]: Command | undefined;
   };
 
   constructor(commands: Commands) {
@@ -50,7 +50,7 @@ export class CommandManager<
         (record, command) => {
           return { ...record, [command.id]: command };
         },
-        {} as { [key: string]: Command<string> | undefined },
+        {} as { [key: string]: Command | undefined },
       );
   }
 
@@ -68,13 +68,13 @@ export class CommandManager<
 
   public resolve(
     commandPath: [string | undefined, string | undefined, string],
-  ): Command<string> | undefined {
+  ): Command | undefined {
     const groupName = commandPath[0];
     const subcommandName = commandPath[1];
     const commandName = commandPath[2];
 
     if (!groupName && !subcommandName) {
-      return this.commandRecord[commandName] as Command<string>;
+      return this.commandRecord[commandName] as Command;
     }
 
     if (!groupName && subcommandName) {
@@ -106,7 +106,7 @@ export class CommandManager<
     return;
   }
 
-  public resolveById(id: string): Command<string> | undefined {
+  public resolveById(id: string): Command | undefined {
     return this.commandIdRecord[id];
   }
 }

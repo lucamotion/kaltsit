@@ -1,8 +1,4 @@
-export abstract class BaseCommand<Name> {
-  name: Name;
+export abstract class BaseCommand {
+  abstract readonly name: Readonly<string>;
   abstract description: string;
-
-  constructor(name: Name) {
-    this.name = name;
-  }
 }

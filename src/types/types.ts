@@ -5,11 +5,11 @@ import { CommandWithSubcommandGroups } from "../structs/commands/CommandWithSubc
 import { CommandWithSubcommands } from "../structs/commands/CommandWithSubcommands.js";
 import { CommandOption } from "../structs/commands/options/CommandOption.js";
 
-export type ContextMutator<SourceCommand extends Command<string>> = (
+export type ContextMutator<SourceCommand extends Command> = (
   context: CommandContext<SourceCommand>,
 ) => Promise<CommandContext<SourceCommand>>;
 
-export type Precondition<SourceCommand extends Command<string>> = (
+export type Precondition<SourceCommand extends Command> = (
   ctx: CommandContext<SourceCommand>,
 ) => Promise<Result<true, Error>>;
 
@@ -25,12 +25,11 @@ export type MultiTransformer<
 > = Transformer<Array<string>, Output>;
 
 export type AnyCommand =
-  | Command<string>
-  | CommandWithSubcommandGroups<string>
-  | CommandWithSubcommands<string>;
+  | Command
+  | CommandWithSubcommandGroups
+  | CommandWithSubcommands;
 
-type CommandOptions<SourceCommand extends Command<string>> =
-  SourceCommand["options"];
+type CommandOptions<SourceCommand extends Command> = SourceCommand["options"];
 
 type OptionalizeResult<ResultType extends Result<unknown, unknown>> =
   ResultType extends Ok<infer Output, infer Error>
@@ -70,7 +69,7 @@ type BaseCommandOption =
   | CommandOption<string, boolean, undefined, MultiTransformer>;
 
 /** Generates an input type from {@link Command.options} for use in {@link parseOptions} */
-export type ParseOptionsInput<SourceCommand extends Command<string>> = {
+export type ParseOptionsInput<SourceCommand extends Command> = {
   [key in CommandOptions<SourceCommand>[number] as key["name"]]: key["required"] extends true
     ? string | string[]
     : string | string[] | undefined;
