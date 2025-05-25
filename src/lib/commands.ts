@@ -22,6 +22,7 @@ export function transformCommands(
         type: ApplicationCommandType.ChatInput,
         name: command.name,
         description: command.description,
+        contexts: command.contexts,
         options: command.subcommandGroups.map((group) => ({
           type: ApplicationCommandOptionType.SubcommandGroup,
           name: group.name,
@@ -39,6 +40,7 @@ export function transformCommands(
         type: ApplicationCommandType.ChatInput,
         name: command.name,
         description: command.description,
+        contexts: command.contexts,
         options: command.commands.map((subcommand) => ({
           type: ApplicationCommandOptionType.Subcommand,
           name: subcommand.name,
@@ -52,6 +54,7 @@ export function transformCommands(
         name: command.name,
         description: command.description,
         options: command.options.map((option) => option.toJSON()),
+        contexts: command.contexts,
       } satisfies RESTPostAPIChatInputApplicationCommandsJSONBody;
     }
   });

@@ -1,3 +1,4 @@
+import { type InteractionContextType } from "discord.js";
 import { generateCommandId } from "../../lib/ids.js";
 import { dataStore } from "../../main.js";
 import {
@@ -17,6 +18,7 @@ export abstract class Command extends BaseCommand {
     | CommandOption<string, boolean, undefined, MultiTransformer>
   >;
   abstract preconditions: Array<Precondition<Command>>;
+  abstract contexts: Array<InteractionContextType>;
 
   abstract execute(ctx: CommandContext<Command>): Promise<unknown>;
 
