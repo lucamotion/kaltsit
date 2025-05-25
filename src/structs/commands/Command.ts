@@ -1,14 +1,14 @@
 import { generateCommandId } from "../../lib/ids.js";
 import { dataStore } from "../../main.js";
 import {
-  MultiTransformer,
-  ParseOptionsInput,
-  Precondition,
-  SingleTransformer,
+  type MultiTransformer,
+  type ParseOptionsInput,
+  type Precondition,
+  type SingleTransformer,
 } from "../../types/types.js";
 import { BaseCommand } from "./BaseCommand.js";
-import { CommandContext } from "./CommandContext.js";
-import { CommandOption } from "./options/CommandOption.js";
+import { type CommandContext } from "./CommandContext.js";
+import { type CommandOption } from "./options/CommandOption.js";
 
 export abstract class Command extends BaseCommand {
   public id: string;

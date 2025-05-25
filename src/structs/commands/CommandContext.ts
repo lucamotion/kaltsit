@@ -1,19 +1,19 @@
 import {
-  AnySelectMenuInteraction,
-  BitFieldResolvable,
-  ButtonInteraction,
-  ChatInputCommandInteraction,
-  Client,
-  InteractionEditReplyOptions,
-  InteractionReplyOptions,
-  MessageFlags,
+  type AnySelectMenuInteraction,
+  type BitFieldResolvable,
+  type ButtonInteraction,
+  type ChatInputCommandInteraction,
+  type Client,
+  type InteractionEditReplyOptions,
+  type InteractionReplyOptions,
+  type MessageFlags,
   MessagePayload,
-  ModalBuilder,
-  ModalSubmitInteraction,
-  User,
+  type ModalBuilder,
+  type ModalSubmitInteraction,
+  type User,
 } from "discord.js";
-import { CommandOptionsResult } from "../../types/types.js";
-import { Command } from "./Command.js";
+import { type CommandOptionsResult } from "../../types/types.js";
+import { type Command } from "./Command.js";
 
 export class CommandContext<SourceCommand extends Command> {
   private client: Client;

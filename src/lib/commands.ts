@@ -1,16 +1,16 @@
 import {
   ApplicationCommandOptionType,
   ApplicationCommandType,
-  RESTPostAPIChatInputApplicationCommandsJSONBody,
+  type RESTPostAPIChatInputApplicationCommandsJSONBody,
 } from "discord.js";
-import { err, ok, Result } from "neverthrow";
-import { Command } from "../structs/commands/Command.js";
+import { err, ok, type Result } from "neverthrow";
+import { type Command } from "../structs/commands/Command.js";
 import { CommandWithSubcommandGroups } from "../structs/commands/CommandWithSubcommandGroups.js";
 import { CommandWithSubcommands } from "../structs/commands/CommandWithSubcommands.js";
 import {
-  AnyCommand,
-  CommandOptionsResult,
-  ParseOptionsInput,
+  type AnyCommand,
+  type CommandOptionsResult,
+  type ParseOptionsInput,
 } from "../types/types.js";
 
 export function transformCommands(

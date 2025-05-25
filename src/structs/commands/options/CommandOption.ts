@@ -1,9 +1,12 @@
 import {
-  APIApplicationCommandBasicOption,
+  type APIApplicationCommandBasicOption,
   ApplicationCommandOptionBase,
-  ApplicationCommandOptionType,
+  type ApplicationCommandOptionType,
 } from "discord.js";
-import { MultiTransformer, SingleTransformer } from "../../../types/types.js";
+import type {
+  MultiTransformer,
+  SingleTransformer,
+} from "../../../types/types.js";
 
 export class CommandOption<
   Name extends string,
