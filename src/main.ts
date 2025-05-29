@@ -10,6 +10,7 @@ import { CommandOption } from "./structs/commands/options/CommandOption.js";
 import { RoleOption } from "./structs/commands/options/RoleOption.js";
 import { CommandStringOption } from "./structs/commands/options/StringOption.js";
 import { UserOption } from "./structs/commands/options/UserOption.js";
+import { Subcommand } from "./structs/commands/Subcommand.js";
 import {
   KaltsitError,
   PermissionsError,
@@ -36,6 +37,7 @@ export {
   PermissionsError,
   RoleOption,
   SelectBuilder,
+  Subcommand,
   TextInputBuilder,
   UserOption,
   type Precondition,
