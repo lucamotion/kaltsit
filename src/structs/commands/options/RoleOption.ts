@@ -11,7 +11,7 @@ export class RoleOption<
   TransformType extends SingleTransformer | undefined = undefined,
   MultiTransformType extends MultiTransformer | undefined = undefined,
 > extends CommandOption<Name, Required, TransformType, MultiTransformType> {
-  type = ApplicationCommandOptionType.User as const;
+  type = ApplicationCommandOptionType.Role as const;
 
   declare useTransformer: <NewTransform extends SingleTransformer>(
     transformer: NewTransform,
