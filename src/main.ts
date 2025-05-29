@@ -5,6 +5,7 @@ import { Command } from "./structs/commands/Command.js";
 import { CommandContext } from "./structs/commands/CommandContext.js";
 import { CommandManager } from "./structs/commands/CommandManager.js";
 import { CommandOption } from "./structs/commands/options/CommandOption.js";
+import { RoleOption } from "./structs/commands/options/RoleOption.js";
 import { CommandStringOption } from "./structs/commands/options/StringOption.js";
 import { UserOption } from "./structs/commands/options/UserOption.js";
 import {
@@ -29,6 +30,7 @@ export {
   CommandStringOption,
   KaltsitError,
   PermissionsError,
+  RoleOption,
   SelectBuilder,
   TextInputBuilder,
   UserOption,
