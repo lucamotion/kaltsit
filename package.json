@@ -6,8 +6,14 @@
   "license": "UNLICENSED",
   "private": true,
   "type": "module",
-  "main": "src/main.ts",
-  "types": "src/main.ts",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/main.js",
+      "types": "./src/main.ts"
+    }
+  },
   "scripts": {
     "build": "tsc"
   },
