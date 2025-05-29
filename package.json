@@ -2,7 +2,7 @@
   "name": "kaltsit",
   "description": "An opinionated Discord bot framework where everything is a command.",
   "author": "Luca <hi@luc.rs> (https://luc.rs)",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "license": "AGPL-3.0-only",
   "type": "module",
   "main": "dist/main.js",

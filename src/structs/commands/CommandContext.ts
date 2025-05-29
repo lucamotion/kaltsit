@@ -4,6 +4,7 @@ import {
   type ButtonInteraction,
   type ChatInputCommandInteraction,
   type Client,
+  Guild,
   type InteractionEditReplyOptions,
   type InteractionReplyOptions,
   type MessageFlags,
@@ -25,6 +26,7 @@ export class CommandContext<SourceCommand extends Command> {
 
   public options: CommandOptionsResult<SourceCommand["options"]>;
   public user: User;
+  public guild: Guild | null;
 
   constructor(
     interaction:
@@ -39,6 +41,7 @@ export class CommandContext<SourceCommand extends Command> {
 
     this.options = options;
     this.user = interaction.user;
+    this.guild = interaction.guild;
   }
 
   public async deferEdit() {
