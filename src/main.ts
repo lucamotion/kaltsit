@@ -6,6 +6,7 @@ import { CommandContext } from "./structs/commands/CommandContext.js";
 import { CommandManager } from "./structs/commands/CommandManager.js";
 import { CommandOption } from "./structs/commands/options/CommandOption.js";
 import { CommandStringOption } from "./structs/commands/options/StringOption.js";
+import { UserOption } from "./structs/commands/options/UserOption.js";
 import {
   KaltsitError,
   PermissionsError,
@@ -30,5 +31,6 @@ export {
   PermissionsError,
   SelectBuilder,
   TextInputBuilder,
+  UserOption,
   type Precondition,
 };
