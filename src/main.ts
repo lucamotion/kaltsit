@@ -4,6 +4,8 @@ import { BaseCommand } from "./structs/commands/BaseCommand.js";
 import { Command } from "./structs/commands/Command.js";
 import { CommandContext } from "./structs/commands/CommandContext.js";
 import { CommandManager } from "./structs/commands/CommandManager.js";
+import { CommandWithSubcommandGroups } from "./structs/commands/CommandWithSubcommandGroups.js";
+import { CommandWithSubcommands } from "./structs/commands/CommandWithSubcommands.js";
 import { CommandOption } from "./structs/commands/options/CommandOption.js";
 import { RoleOption } from "./structs/commands/options/RoleOption.js";
 import { CommandStringOption } from "./structs/commands/options/StringOption.js";
@@ -28,6 +30,8 @@ export {
   CommandManager,
   CommandOption,
   CommandStringOption,
+  CommandWithSubcommandGroups,
+  CommandWithSubcommands,
   KaltsitError,
   PermissionsError,
   RoleOption,
