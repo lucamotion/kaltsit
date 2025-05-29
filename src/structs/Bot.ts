@@ -74,8 +74,10 @@ export class Bot<
         rawOptions = data;
 
         if (rawOptions) {
-          for (const component of interaction.components[0].components) {
-            rawOptions[component.customId] = component.value;
+          for (const actionRow of interaction.components) {
+            for (const component of actionRow.components) {
+              rawOptions[component.customId] = component.value;
+            }
           }
         }
       } else if (interaction.isMessageComponent()) {
