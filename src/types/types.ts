@@ -4,6 +4,7 @@ import { type Command } from "../structs/commands/Command.js";
 import { type CommandWithSubcommandGroups } from "../structs/commands/CommandWithSubcommandGroups.js";
 import { type CommandWithSubcommands } from "../structs/commands/CommandWithSubcommands.js";
 import { type CommandOption } from "../structs/commands/options/CommandOption.js";
+import { TransformerContext } from "../structs/commands/TransformerContext.js";
 
 export type ContextMutator<SourceCommand extends Command> = (
   context: CommandContext<SourceCommand>,
@@ -13,16 +14,27 @@ export type Precondition<SourceCommand extends Command> = (
   ctx: CommandContext<SourceCommand>,
 ) => Promise<Result<true, Error>>;
 
-type Transformer<Input, Output extends Result<unknown, unknown>> =
-  | ((value: Input) => Output)
-  | ((value: Input) => Promise<Output>);
+type Transformer<
+  Input,
+  Output extends Result<any, any> | Promise<Result<any, any>>,
+> = (value: Input, ctx: TransformerContext) => Output;
 
 export type SingleTransformer<
-  Output extends Result<unknown, unknown> = Result<unknown, unknown>,
-> = Transformer<string, Output>;
+  Input = string,
+  Output extends Result<any, any> = Result<any, any>,
+> = Transformer<Input, Output>;
+export type AsyncSingleTransformer<
+  Input = string,
+  Output extends Result<any, any> = Result<any, any>,
+> = Transformer<Input, Promise<Output>>;
 export type MultiTransformer<
+  Input = Array<string>,
   Output extends Result<unknown, unknown> = Result<unknown, unknown>,
-> = Transformer<Array<string>, Output>;
+> = Transformer<Input, Output>;
+export type AsyncMultiTransformer<
+  Input = Array<string>,
+  Output extends Result<any, any> = Result<any, any>,
+> = Transformer<Input, Promise<Output>>;
 
 export type AnyCommand =
   | Command
@@ -32,8 +44,8 @@ export type AnyCommand =
 type CommandOptions<SourceCommand extends Command> = SourceCommand["options"];
 
 type OptionalizeResult<ResultType extends Result<unknown, unknown>> =
-  ResultType extends Ok<infer Output, infer Error>
-    ? Ok<Output | undefined, Error>
+  ResultType extends Result<infer Output, never>
+    ? Ok<Output | undefined, never>
     : ResultType extends Result<infer Output, infer Error>
       ? Result<Output | undefined, Error>
       : never;
@@ -44,13 +56,22 @@ type OptionalizeIfNotRequired<
 > = Required extends true ? Output : OptionalizeResult<Output>;
 
 type InferTransformerOutput<
-  T extends MultiTransformer | SingleTransformer | undefined,
+  T extends
+    | MultiTransformer
+    | AsyncMultiTransformer
+    | SingleTransformer
+    | AsyncSingleTransformer
+    | undefined,
 > =
-  T extends MultiTransformer<infer MultiOutput>
+  T extends MultiTransformer<any, infer MultiOutput>
     ? MultiOutput
-    : T extends SingleTransformer<infer SingleOutput>
-      ? SingleOutput
-      : never;
+    : T extends AsyncMultiTransformer<any, infer AsyncMultiOutput>
+      ? Awaited<AsyncMultiOutput>
+      : T extends SingleTransformer<any, infer SingleOutput>
+        ? SingleOutput
+        : T extends AsyncSingleTransformer<any, infer AsyncSingleOutput>
+          ? Awaited<AsyncSingleOutput>
+          : never;
 
 type InferOptionResult<Option extends BaseCommandOption> =
   OptionalizeIfNotRequired<
@@ -65,14 +86,40 @@ export type CommandOptionsResult<
 };
 
 type BaseCommandOption =
-  | CommandOption<string, boolean, SingleTransformer, undefined>
-  | CommandOption<string, boolean, undefined, MultiTransformer>;
+  | CommandOption<
+      string,
+      boolean,
+      SingleTransformer | AsyncSingleTransformer,
+      undefined
+    >
+  | CommandOption<
+      string,
+      boolean,
+      undefined,
+      MultiTransformer | AsyncMultiTransformer
+    >;
 
 /** Generates an input type from {@link Command.options} for use in {@link parseOptions} */
 export type ParseOptionsInput<SourceCommand extends Command> = {
   [key in CommandOptions<SourceCommand>[number] as key["name"]]: key["required"] extends true
-    ? string | string[]
-    : string | string[] | undefined;
+    ? key["transform"] extends
+        | SingleTransformer<any>
+        | AsyncSingleTransformer<any>
+      ? Parameters<key["transform"]>[0]
+      : key["multiTransform"] extends
+            | MultiTransformer<any>
+            | AsyncMultiTransformer<any>
+        ? Parameters<key["multiTransform"]>[0]
+        : never
+    : key["transform"] extends
+          | SingleTransformer<any>
+          | AsyncSingleTransformer<any>
+      ? Parameters<key["transform"]>[0] | undefined
+      : key["multiTransform"] extends
+            | MultiTransformer<any>
+            | AsyncMultiTransformer<any>
+        ? Parameters<key["multiTransform"]>[0] | undefined
+        : never;
 };
 
 type SubcommandPath<Subcommand extends CommandWithSubcommands> =

@@ -2,6 +2,8 @@ import { type InteractionContextType } from "discord.js";
 import { generateCommandId } from "../../lib/ids.js";
 import { dataStore } from "../../main.js";
 import {
+  AsyncMultiTransformer,
+  AsyncSingleTransformer,
   type MultiTransformer,
   type ParseOptionsInput,
   type Precondition,
@@ -16,8 +18,18 @@ export abstract class Command<
 > extends BaseCommand {
   public id: string;
   abstract options: ReadonlyArray<
-    | CommandOption<string, boolean, SingleTransformer, undefined>
-    | CommandOption<string, boolean, undefined, MultiTransformer>
+    | CommandOption<
+        any,
+        boolean,
+        SingleTransformer<any> | AsyncSingleTransformer<any>,
+        undefined
+      >
+    | CommandOption<
+        any,
+        boolean,
+        undefined,
+        MultiTransformer<any> | AsyncMultiTransformer<any>
+      >
   >;
   abstract preconditions: Array<Precondition<Command<Self>>>;
   abstract contexts: Array<InteractionContextType>;
@@ -42,9 +54,13 @@ export abstract class Command<
     return `${this.id}:${uuid}`;
   }
 
-  public generateSelectCustomId(
-    overwrites: Exclude<Self["options"][number]["name"], "overwrites">,
-    input: ParseOptionsInput<Self>,
+  public generateSelectCustomId<
+    Overwrite extends Exclude<Self["options"][number]["name"], "overwrites">,
+  >(
+    overwrites: Overwrite,
+    input: Omit<ParseOptionsInput<Self>, Overwrite> & {
+      [key in Overwrite]?: ParseOptionsInput<Self>[key] | undefined;
+    },
   ): `${Self["id"]}:${string}` {
     const uuid = crypto.randomUUID();
     dataStore.set(uuid, { ...input, overwrites });

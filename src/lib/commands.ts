@@ -9,6 +9,7 @@ import { CommandWithSubcommandGroups } from "../structs/commands/CommandWithSubc
 import { CommandWithSubcommands } from "../structs/commands/CommandWithSubcommands.js";
 import { ComponentCommand } from "../structs/commands/ComponentCommand.js";
 import { ComponentSubcommand } from "../structs/commands/ComponentSubcommand.js";
+import { TransformerContext } from "../structs/commands/TransformerContext.js";
 import {
   type AnyCommand,
   type CommandOptionsResult,
@@ -100,6 +101,7 @@ export function transformCommands(
 export async function parseOptions<SourceCommand extends Command>(
   command: SourceCommand,
   options: ParseOptionsInput<SourceCommand>,
+  context: TransformerContext,
 ): Promise<Result<CommandOptionsResult<SourceCommand["options"]>, string>> {
   const resultOptions: { [key: string]: Result<unknown, unknown> } = {};
 
@@ -125,7 +127,8 @@ export async function parseOptions<SourceCommand extends Command>(
 
     if (commandOption.multiTransform) {
       const result = commandOption.multiTransform(
-        (Array.isArray(value) ? value : [value]).map((v) => v.toString()),
+        (Array.isArray(value) ? value : [value]).map((v) => v),
+        context,
       );
 
       resultOptions[commandOption.name] = await Promise.resolve(result);
@@ -140,7 +143,7 @@ export async function parseOptions<SourceCommand extends Command>(
         }
       }
 
-      const transformResult = commandOption.transform(value.toString());
+      const transformResult = commandOption.transform(value, context);
       resultOptions[commandOption.name] =
         await Promise.resolve(transformResult);
     }

@@ -25,6 +25,7 @@ export class CommandContext<SourceCommand extends Command> {
     | ModalSubmitInteraction;
 
   public options: CommandOptionsResult<SourceCommand["options"]>;
+
   public user: User;
   public guild: Guild | null;
 

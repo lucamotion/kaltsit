@@ -1,6 +1,12 @@
-import { Client, type ClientOptions, MessageFlags, Routes } from "discord.js";
+import {
+  ApplicationCommandOptionType,
+  Client,
+  type ClientOptions,
+  MessageFlags,
+  Routes,
+} from "discord.js";
 import { parseOptions, transformCommands } from "../lib/commands.js";
-import { dataStore } from "../main.js";
+import { dataStore, UserOption } from "../main.js";
 import {
   type AnyCommand,
   type ContextMutator,
@@ -9,6 +15,8 @@ import {
 import { Command } from "./commands/Command.js";
 import { CommandContext } from "./commands/CommandContext.js";
 import { type CommandManager } from "./commands/CommandManager.js";
+import { RoleOption } from "./commands/options/RoleOption.js";
+import { TransformerContext } from "./commands/TransformerContext.js";
 import { KaltsitError } from "./error/KaltsitError.js";
 
 export class Bot<
@@ -62,8 +70,8 @@ export class Bot<
         return;
       }
 
-      let command;
-      let rawOptions;
+      let command: AnyCommand | undefined;
+      let rawOptions: ParseOptionsInput<Command<any>> | undefined;
 
       if (interaction.isModalSubmit()) {
         const [commandId, uuid] = interaction.customId.split(":");
@@ -92,7 +100,27 @@ export class Bot<
           const overwrites = data?.overwrites?.toString();
 
           if (rawOptions && overwrites) {
-            rawOptions[overwrites] = interaction.values;
+            const targetOption = command?.options.find(
+              (option) => option.name === overwrites,
+            );
+
+            if (targetOption) {
+              if (
+                targetOption instanceof UserOption &&
+                interaction.isUserSelectMenu()
+              ) {
+                rawOptions[overwrites] = interaction.users;
+              } else if (
+                targetOption instanceof RoleOption &&
+                interaction.isRoleSelectMenu()
+              ) {
+                rawOptions[overwrites] = interaction.roles;
+              } else {
+                rawOptions[overwrites] = interaction.values;
+              }
+            } else {
+              return;
+            }
           }
         }
       } else if (interaction.isCommand()) {
@@ -131,6 +159,32 @@ export class Bot<
 
         const interactionOptionsRecord = interactionOptions.reduce(
           (record, option) => {
+            const sourceCommandOption = (command as Command).options.find(
+              (opt) => opt.name === option.name,
+            );
+
+            if (!sourceCommandOption) {
+              return record;
+            }
+
+            if (
+              option.type === ApplicationCommandOptionType.User &&
+              sourceCommandOption instanceof UserOption
+            ) {
+              return <ParseOptionsInput<Command>>{
+                ...record,
+                [option.name]: option.user,
+              };
+            } else if (
+              option.type === ApplicationCommandOptionType.Role &&
+              sourceCommandOption instanceof RoleOption
+            ) {
+              return <ParseOptionsInput<Command>>{
+                ...record,
+                [option.name]: option.role ?? undefined,
+              };
+            }
+
             return { ...record, [option.name]: option.value?.toString() };
           },
           {} as ParseOptionsInput<Command>,
@@ -139,11 +193,16 @@ export class Bot<
         rawOptions = interactionOptionsRecord;
       }
 
-      if (!command || !rawOptions) {
+      if (!command || !(command instanceof Command) || !rawOptions) {
         return;
       }
 
-      const parsedOptions = await parseOptions(command, rawOptions);
+      const context = new TransformerContext(
+        this,
+        interaction.user,
+        interaction.guild!,
+      );
+      const parsedOptions = await parseOptions(command, rawOptions, context);
 
       if (parsedOptions.isErr()) {
         await interaction.reply({
