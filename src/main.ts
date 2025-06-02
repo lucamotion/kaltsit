@@ -18,7 +18,10 @@ import {
   PermissionsError,
 } from "./structs/error/KaltsitError.js";
 import { TextInputBuilder } from "./structs/modal/TextInputBuilder.js";
-import { SelectBuilder } from "./structs/select/SelectBuilder.js";
+import {
+  RoleSelectBuilder,
+  SelectBuilder,
+} from "./structs/select/SelectBuilder.js";
 import { ParseOptionsInput, Precondition } from "./types/types.js";
 
 export const dataStore: Map<string, ParseOptionsInput<Command>> = new Map();
@@ -40,6 +43,7 @@ export {
   KaltsitError,
   PermissionsError,
   RoleOption,
+  RoleSelectBuilder,
   SelectBuilder,
   Subcommand,
   TextInputBuilder,
