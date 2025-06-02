@@ -1,25 +1,23 @@
-import { type AnyCommand } from "../../types/types.js";
+import {
+  type AnyCommand,
+  type CommandRecordWithPaths,
+} from "../../types/types.js";
 import { Command } from "./Command.js";
 import { CommandWithSubcommandGroups } from "./CommandWithSubcommandGroups.js";
 import { CommandWithSubcommands } from "./CommandWithSubcommands.js";
 
 type CommandArray = ReadonlyArray<AnyCommand>;
-type CmdRecord<Arr extends CommandArray> = {
-  [Command in Arr[number] as Command["name"]]: Command;
-};
 
 export class CommandManager<
   Commands extends CommandArray = CommandArray,
-  CommandRecord extends Record<
-    string,
-    AnyCommand | undefined
-  > = CmdRecord<Commands>,
-  CommandName extends Extract<keyof CommandRecord, string> = Extract<
+  CommandRecord extends
+    CommandRecordWithPaths<Commands> = CommandRecordWithPaths<Commands>,
+  CommandPath extends Extract<keyof CommandRecord, string> = Extract<
     keyof CommandRecord,
     string
   >,
 > {
-  private commands: Commands;
+  public readonly commands: Commands;
   private commandRecord: CommandRecord;
   private commandIdRecord: {
     [key: string]: Command | undefined;
@@ -28,12 +26,36 @@ export class CommandManager<
   constructor(commands: Commands) {
     this.commands = commands;
     this.commandRecord = commands.reduce((record, command) => {
-      if (record[command.name]) {
-        console.warn(`Duplicate commands found at ${command.name}`);
-        return record;
+      const recordToMerge: { [key: string]: AnyCommand } = {};
+
+      if (command instanceof Command) {
+        recordToMerge[command.name] = command;
+      } else if (command instanceof CommandWithSubcommands) {
+        recordToMerge[command.name] = command;
+
+        for (const subcommand of command.commands) {
+          recordToMerge[`${command.name}.${subcommand.name}`] = subcommand;
+        }
+      } else if (command instanceof CommandWithSubcommandGroups) {
+        recordToMerge[command.name] = command;
+        for (const group of command.subcommandGroups) {
+          recordToMerge[group.name] = group;
+          for (const subcommand of group.commands) {
+            recordToMerge[`${group.name}.${subcommand.name}`] = subcommand;
+          }
+        }
       }
 
-      return { ...record, [command.name]: command };
+      for (const key in recordToMerge) {
+        if (record[key as keyof typeof record]) {
+          console.warn(
+            `Duplicate command found at ${key}. The full command tree will be skipped.`,
+          );
+          continue;
+        }
+      }
+
+      return { ...record, ...recordToMerge };
     }, {} as CommandRecord);
     this.commandIdRecord = commands
       .map((command) => {
@@ -54,56 +76,16 @@ export class CommandManager<
       );
   }
 
-  public isCommandName(name: string): name is CommandName {
-    return this.commandRecord[name] !== undefined;
+  public isCommandPath(path: string): path is CommandPath {
+    return this.commandRecord[path as CommandPath] !== undefined;
   }
 
-  public getCommand<T extends CommandName>(name: T): CommandRecord[T] {
-    return this.commandRecord[name];
+  public getCommand<T extends CommandPath>(path: T): CommandRecord[T] {
+    return this.commandRecord[path];
   }
 
   public getAllCommands(): Commands {
     return this.commands;
-  }
-
-  public resolve(
-    commandPath: [string | undefined, string | undefined, string],
-  ): Command | undefined {
-    const groupName = commandPath[0];
-    const subcommandName = commandPath[1];
-    const commandName = commandPath[2];
-
-    if (!groupName && !subcommandName) {
-      return this.commandRecord[commandName] as Command;
-    }
-
-    if (!groupName && subcommandName) {
-      const subcommand = this.commandRecord[subcommandName];
-
-      if (subcommand instanceof CommandWithSubcommands) {
-        return subcommand.commands.find((c) => c.name === commandName);
-      } else {
-        return;
-      }
-    }
-
-    if (!groupName) {
-      return;
-    }
-
-    const subcommandGroup = this.commandRecord[groupName];
-
-    if (subcommandGroup instanceof CommandWithSubcommandGroups) {
-      const subcommand = subcommandGroup.subcommandGroups.find(
-        (c) => c.name === subcommandName,
-      );
-
-      if (subcommand instanceof CommandWithSubcommands) {
-        return subcommand.commands.find((c) => c.name === commandName);
-      }
-    }
-
-    return;
   }
 
   public resolveById(id: string): Command | undefined {

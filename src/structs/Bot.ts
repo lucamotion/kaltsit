@@ -6,7 +6,7 @@ import {
   type ContextMutator,
   type ParseOptionsInput,
 } from "../types/types.js";
-import { type Command } from "./commands/Command.js";
+import { Command } from "./commands/Command.js";
 import { CommandContext } from "./commands/CommandContext.js";
 import { type CommandManager } from "./commands/CommandManager.js";
 import { KaltsitError } from "./error/KaltsitError.js";
@@ -115,7 +115,19 @@ export class Bot<
           return;
         }
 
-        command = this.commandManager.resolve(commandPath);
+        const joinedPath = commandPath
+          .filter((str) => str !== undefined)
+          .join(".");
+
+        if (!this.commandManager.isCommandPath(joinedPath)) {
+          return;
+        }
+
+        command = this.commandManager.getCommand(joinedPath);
+
+        if (!(command instanceof Command)) {
+          return;
+        }
 
         const interactionOptionsRecord = interactionOptions.reduce(
           (record, option) => {
