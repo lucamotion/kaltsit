@@ -10,9 +10,12 @@
   "exports": {
     ".": {
       "import": "./dist/main.js",
-      "types": "./src/main.ts"
+      "types": "./dist/main.d.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc"
   },

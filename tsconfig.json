@@ -13,7 +13,9 @@
     "lib": ["ESNext"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "declaration": true
+    "declaration": true,
+    "composite": true,
+    "rootDir": "src"
   },
   "include": ["src"]
 }

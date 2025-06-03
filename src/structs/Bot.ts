@@ -247,3 +247,5 @@ export class Bot<
     this.commandManager = commandManager;
   }
 }
+
+export const Foo = "foo";
