@@ -50,5 +50,3 @@ export {
   UserOption,
   type Precondition,
 };
-
-export const Bar = "bar";
