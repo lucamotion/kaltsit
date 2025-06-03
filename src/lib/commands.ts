@@ -127,7 +127,7 @@ export async function parseOptions<SourceCommand extends Command>(
 
     if (commandOption.multiTransform) {
       const result = commandOption.multiTransform(
-        (Array.isArray(value) ? value : [value]).map((v) => v),
+        Array.isArray(value) ? value : [value],
         context,
       );
 
