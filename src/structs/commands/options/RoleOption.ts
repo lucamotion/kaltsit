@@ -1,33 +1,65 @@
-import { ApplicationCommandOptionType, Role } from "discord.js";
-import { Ok } from "neverthrow";
+import { ApplicationCommandOptionType, Role, RoleResolvable } from "discord.js";
+import { err, ok, Result } from "neverthrow";
 import {
   AsyncMultiTransformer,
   AsyncSingleTransformer,
   type MultiTransformer,
   type SingleTransformer,
 } from "../../../types/types.js";
+import { TransformerContext } from "../TransformerContext.js";
 import { CommandOption } from "./CommandOption.js";
 
 export class RoleOption<
   Name extends string,
   Required extends boolean = false,
   TransformType extends
-    | (SingleTransformer<Role> | AsyncSingleTransformer<Role>)
-    | undefined = (value: Role) => Ok<Role, never>,
+    | (
+        | SingleTransformer<RoleResolvable>
+        | AsyncSingleTransformer<RoleResolvable>
+      )
+    | undefined = AsyncSingleTransformer<RoleResolvable, Result<Role, Error>>,
   MultiTransformType extends
-    | (MultiTransformer<Array<Role>> | AsyncMultiTransformer<Array<Role>>)
+    | (
+        | MultiTransformer<Array<RoleResolvable>>
+        | AsyncMultiTransformer<Array<RoleResolvable>>
+      )
     | undefined = undefined,
 > extends CommandOption<Name, Required, TransformType, MultiTransformType> {
   type = ApplicationCommandOptionType.Role as const;
 
+  transform = (async (
+    value: RoleResolvable,
+    context: TransformerContext,
+  ): Promise<Result<Role, Error>> => {
+    if (value instanceof Role) {
+      return ok(value);
+    }
+
+    if (!context.guild) {
+      return err(new Error("cannot fetch role outside of a guild"));
+    }
+
+    const role = await context.guild.roles.fetch(value);
+
+    if (!role) {
+      return err(new Error("Role not found"));
+    }
+
+    return ok(role);
+  }) as TransformType;
+
   declare useTransformer: <
-    NewTransform extends SingleTransformer<any> | AsyncSingleTransformer<any>,
+    NewTransform extends
+      | SingleTransformer<RoleResolvable>
+      | AsyncSingleTransformer<RoleResolvable>,
   >(
     transformer: NewTransform,
   ) => RoleOption<Name, Required, NewTransform, undefined>;
 
   declare useMultiTransformer: <
-    NewTransform extends MultiTransformer<any> | AsyncMultiTransformer<any>,
+    NewTransform extends
+      | MultiTransformer<Array<RoleResolvable>>
+      | AsyncMultiTransformer<Array<RoleResolvable>>,
   >(
     multiTransformer: NewTransform,
   ) => RoleOption<Name, Required, undefined, NewTransform>;
