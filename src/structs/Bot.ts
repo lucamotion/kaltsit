@@ -21,7 +21,8 @@ import { KaltsitError } from "./error/KaltsitError.js";
 
 export class Bot<
   Commands extends ReadonlyArray<AnyCommand> = ReadonlyArray<AnyCommand>,
-> extends Client {
+  Ready extends boolean = false,
+> extends Client<Ready> {
   commandManager: CommandManager<Commands>;
 
   private contextMutator: ContextMutator<Command> | undefined;
@@ -38,34 +39,51 @@ export class Bot<
       throw new Error("DISCORD_TOKEN must be specified in .env!");
     }
 
-    const clientId = process.env.CLIENT_ID;
     const isProduction = process.env.NODE_ENV === "production";
     const devGuildId = process.env.DEVELOPMENT_GUILD_ID;
 
-    if (!clientId) {
-      throw new Error("CLIENT_ID must be specified in .env!");
-    } else if (!isProduction && !devGuildId) {
+    if (!isProduction && !devGuildId) {
       throw new Error(
         "DEVELOPMENT_GUILD_ID must be specified in .env if NODE_ENV != 'production'!",
       );
     }
 
-    this.once("ready", () => {
-      console.log(
-        `Bot authenticated as ${this.user?.username}#${this.user?.discriminator}`,
-      );
+    // wait for command registration before handling interactions
+    await new Promise<void>((resolve, reject) => {
+      this.once("ready", async (client) => {
+        try {
+          const commands = transformCommands(
+            this.commandManager.getAllCommands(),
+          );
+          const commandRoute = isProduction
+            ? Routes.applicationCommands(client.application.id)
+            : Routes.applicationGuildCommands(
+                client.application.id,
+                devGuildId!,
+              );
 
-      const commands = transformCommands(this.commandManager.getAllCommands());
-      const commandRoute = isProduction
-        ? Routes.applicationCommands(clientId)
-        : Routes.applicationGuildCommands(clientId, devGuildId!);
+          await client.rest.put(commandRoute, { body: commands });
+        } catch (error) {
+          reject(error);
+          process.exit(1);
+        }
 
-      this.rest.put(commandRoute, { body: commands }).catch((e) => {
-        console.error(`Failed to PUT application commands:`, e);
+        resolve();
+      });
+
+      this.login(token).catch((error) => {
+        reject(error);
+        process.exit(1);
       });
     });
 
-    this.on("interactionCreate", async (interaction) => {
+    const bot = this as Bot<Commands, true>;
+
+    console.log(
+      `Bot authenticated as ${bot.user.username}#${bot.user.discriminator}`,
+    );
+
+    bot.on("interactionCreate", async (interaction) => {
       if (interaction.isAutocomplete() || interaction.isContextMenuCommand()) {
         return;
       }
@@ -78,7 +96,7 @@ export class Bot<
 
         const data = dataStore.get(uuid);
 
-        command = this.commandManager.resolveById(commandId);
+        command = bot.commandManager.resolveById(commandId);
         rawOptions = data;
 
         if (rawOptions) {
@@ -93,7 +111,7 @@ export class Bot<
 
         const data = dataStore.get(uuid);
 
-        command = this.commandManager.resolveById(commandId);
+        command = bot.commandManager.resolveById(commandId);
         rawOptions = data;
 
         if (interaction.isAnySelectMenu()) {
@@ -147,11 +165,11 @@ export class Bot<
           .filter((str) => str !== undefined)
           .join(".");
 
-        if (!this.commandManager.isCommandPath(joinedPath)) {
+        if (!bot.commandManager.isCommandPath(joinedPath)) {
           return;
         }
 
-        command = this.commandManager.getCommand(joinedPath);
+        command = bot.commandManager.getCommand(joinedPath);
 
         if (!(command instanceof Command)) {
           return;
@@ -198,7 +216,7 @@ export class Bot<
       }
 
       const context = new TransformerContext(
-        this,
+        bot,
         interaction.user,
         interaction.guild!,
       );
@@ -214,8 +232,8 @@ export class Bot<
 
       let commandContext = new CommandContext(interaction, parsedOptions.value);
 
-      if (this.contextMutator) {
-        commandContext = await this.contextMutator(commandContext);
+      if (bot.contextMutator) {
+        commandContext = await bot.contextMutator(commandContext);
       }
 
       for (const precondition of command.preconditions) {
@@ -235,7 +253,6 @@ export class Bot<
       await command.execute(commandContext);
     });
 
-    await this.login(token);
     return token;
   }
 
