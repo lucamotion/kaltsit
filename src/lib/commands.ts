@@ -1,6 +1,8 @@
 import {
   ApplicationCommandOptionType,
   ApplicationCommandType,
+  AutocompleteInteraction,
+  ChatInputCommandInteraction,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
 } from "discord.js";
 import { err, ok, type Result } from "neverthrow";
@@ -150,4 +152,31 @@ export async function parseOptions<SourceCommand extends Command>(
   }
 
   return ok(resultOptions as CommandOptionsResult<SourceCommand["options"]>);
+}
+
+export function resolveCommandFromInteraction(
+  interaction: AutocompleteInteraction | ChatInputCommandInteraction,
+) {
+  const subcommand = interaction.options.getSubcommand(false);
+  const subcommandGroup = interaction.options.getSubcommandGroup(false);
+
+  let commandPath: [string | undefined, string | undefined, string];
+  let interactionOptions;
+
+  if (!subcommand && !subcommandGroup) {
+    commandPath = [undefined, undefined, interaction.commandName];
+    interactionOptions = interaction.options.data;
+  } else if (!subcommandGroup && subcommand) {
+    commandPath = [undefined, interaction.commandName, subcommand];
+    interactionOptions = interaction.options.data[0].options!;
+  } else if (subcommandGroup && subcommand) {
+    commandPath = [interaction.commandName, subcommandGroup, subcommand];
+    interactionOptions = interaction.options.data[0].options![0].options!;
+  } else {
+    return { path: undefined, options: undefined };
+  }
+
+  const joinedPath = commandPath.filter((str) => str !== undefined).join(".");
+
+  return { path: joinedPath, options: interactionOptions };
 }

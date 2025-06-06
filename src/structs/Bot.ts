@@ -5,13 +5,18 @@ import {
   MessageFlags,
   Routes,
 } from "discord.js";
-import { parseOptions, transformCommands } from "../lib/commands.js";
+import {
+  parseOptions,
+  resolveCommandFromInteraction,
+  transformCommands,
+} from "../lib/commands.js";
 import {
   AttachmentOption,
   BooleanOption,
   ChannelOption,
   dataStore,
   NumberOption,
+  StringOption,
   UserOption,
 } from "../main.js";
 import {
@@ -92,14 +97,48 @@ export class Bot<
     );
 
     bot.on("interactionCreate", async (interaction) => {
-      if (interaction.isAutocomplete() || interaction.isContextMenuCommand()) {
+      if (interaction.isContextMenuCommand()) {
         return;
       }
 
       let command: AnyCommand | undefined;
       let rawOptions: ParseOptionsInput<Command<any>> | undefined;
 
-      if (interaction.isModalSubmit()) {
+      if (interaction.isAutocomplete()) {
+        const { path, options } = resolveCommandFromInteraction(interaction);
+
+        if (!path || !bot.commandManager.isCommandPath(path)) {
+          return;
+        }
+
+        command = bot.commandManager.getCommand(path);
+
+        if (!(command instanceof Command)) {
+          return;
+        }
+
+        const option = interaction.options.getFocused(true);
+
+        const commandOption = command.options.find(
+          (opt) => opt.name === option.name,
+        );
+
+        if (
+          !(commandOption instanceof StringOption) ||
+          !commandOption.autocomplete ||
+          !commandOption.executeAutocomplete
+        ) {
+          return;
+        }
+
+        const results = await commandOption.executeAutocomplete(
+          new TransformerContext(bot, interaction.user, interaction.guild!),
+          option,
+        );
+
+        await interaction.respond(results);
+        return;
+      } else if (interaction.isModalSubmit()) {
         const [commandId, uuid] = interaction.customId.split(":");
 
         const data = dataStore.get(uuid);
@@ -150,106 +189,78 @@ export class Bot<
           }
         }
       } else if (interaction.isCommand()) {
-        const subcommand = interaction.options.getSubcommand(false);
-        const subcommandGroup = interaction.options.getSubcommandGroup(false);
+        const { path, options } = resolveCommandFromInteraction(interaction);
 
-        let commandPath: [string | undefined, string | undefined, string];
-        let interactionOptions;
-
-        if (!subcommand && !subcommandGroup) {
-          commandPath = [undefined, undefined, interaction.commandName];
-          interactionOptions = interaction.options.data;
-        } else if (!subcommandGroup && subcommand) {
-          commandPath = [undefined, interaction.commandName, subcommand];
-          interactionOptions = interaction.options.data[0].options!;
-        } else if (subcommandGroup && subcommand) {
-          commandPath = [interaction.commandName, subcommandGroup, subcommand];
-          interactionOptions = interaction.options.data[0].options![0].options!;
-        } else {
+        if (!path || !bot.commandManager.isCommandPath(path)) {
           return;
         }
 
-        const joinedPath = commandPath
-          .filter((str) => str !== undefined)
-          .join(".");
-
-        if (!bot.commandManager.isCommandPath(joinedPath)) {
-          return;
-        }
-
-        command = bot.commandManager.getCommand(joinedPath);
+        command = bot.commandManager.getCommand(path);
 
         if (!(command instanceof Command)) {
           return;
         }
 
-        const interactionOptionsRecord = interactionOptions.reduce(
-          (record, option) => {
-            const sourceCommandOption = (command as Command).options.find(
-              (opt) => opt.name === option.name,
-            );
+        const interactionOptionsRecord = options.reduce((record, option) => {
+          const sourceCommandOption = (command as Command).options.find(
+            (opt) => opt.name === option.name,
+          );
 
-            if (!sourceCommandOption) {
-              return record;
-            }
+          if (!sourceCommandOption) {
+            return record;
+          }
 
-            if (
-              option.type === ApplicationCommandOptionType.User &&
-              sourceCommandOption instanceof UserOption
-            ) {
-              return <ParseOptionsInput<Command>>{
-                ...record,
-                [option.name]: option.user,
-              };
-            } else if (
-              option.type === ApplicationCommandOptionType.Role &&
-              sourceCommandOption instanceof RoleOption
-            ) {
-              return <ParseOptionsInput<Command>>{
-                ...record,
-                [option.name]: option.role ?? undefined,
-              };
-            } else if (
-              option.type === ApplicationCommandOptionType.Attachment &&
-              sourceCommandOption instanceof AttachmentOption
-            ) {
-              return <ParseOptionsInput<Command>>{
-                ...record,
-                [option.name]: option.attachment,
-              };
-            } else if (
-              option.type === ApplicationCommandOptionType.Channel &&
-              sourceCommandOption instanceof ChannelOption
-            ) {
-              return <ParseOptionsInput<Command>>{
-                ...record,
-                [option.name]: option.channel,
-              };
-            } else if (
-              option.type === ApplicationCommandOptionType.Boolean &&
-              sourceCommandOption instanceof BooleanOption
-            ) {
-              console.log(option.value);
-              console.log(typeof option.value);
-              return <ParseOptionsInput<Command>>{
-                ...record,
-                [option.name]: option.value,
-              };
-            } else if (
-              option.type === ApplicationCommandOptionType.Number &&
-              sourceCommandOption instanceof NumberOption
-            ) {
-              console.log(option.value);
-              console.log(typeof option.value);
-              return <ParseOptionsInput<Command>>{
-                ...record,
-                [option.name]: option.value,
-              };
-            }
-            return { ...record, [option.name]: option.value?.toString() };
-          },
-          {} as ParseOptionsInput<Command>,
-        );
+          if (
+            option.type === ApplicationCommandOptionType.User &&
+            sourceCommandOption instanceof UserOption
+          ) {
+            return <ParseOptionsInput<Command>>{
+              ...record,
+              [option.name]: option.user,
+            };
+          } else if (
+            option.type === ApplicationCommandOptionType.Role &&
+            sourceCommandOption instanceof RoleOption
+          ) {
+            return <ParseOptionsInput<Command>>{
+              ...record,
+              [option.name]: option.role ?? undefined,
+            };
+          } else if (
+            option.type === ApplicationCommandOptionType.Attachment &&
+            sourceCommandOption instanceof AttachmentOption
+          ) {
+            return <ParseOptionsInput<Command>>{
+              ...record,
+              [option.name]: option.attachment,
+            };
+          } else if (
+            option.type === ApplicationCommandOptionType.Channel &&
+            sourceCommandOption instanceof ChannelOption
+          ) {
+            return <ParseOptionsInput<Command>>{
+              ...record,
+              [option.name]: option.channel,
+            };
+          } else if (
+            option.type === ApplicationCommandOptionType.Boolean &&
+            sourceCommandOption instanceof BooleanOption
+          ) {
+            return <ParseOptionsInput<Command>>{
+              ...record,
+              [option.name]: option.value,
+            };
+          } else if (
+            option.type === ApplicationCommandOptionType.Number &&
+            sourceCommandOption instanceof NumberOption
+          ) {
+            return <ParseOptionsInput<Command>>{
+              ...record,
+              [option.name]: option.value,
+            };
+          }
+          return { ...record, [option.name]: option.value?.toString() };
+        }, {} as ParseOptionsInput<Command>);
 
         rawOptions = interactionOptionsRecord;
       }
