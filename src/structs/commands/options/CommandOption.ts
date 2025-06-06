@@ -19,7 +19,7 @@ export class CommandOption<
     | (SingleTransformer<any> | AsyncSingleTransformer<any>)
     | undefined = (value: string) => Ok<string, never>,
   MultiTransformType extends
-    | (MultiTransformer<any> | AsyncMultiTransformer<any>)
+    | (MultiTransformer<Array<any>> | AsyncMultiTransformer<Array<any>>)
     | undefined = undefined,
 > extends ApplicationCommandOptionBase {
   readonly name: Name;

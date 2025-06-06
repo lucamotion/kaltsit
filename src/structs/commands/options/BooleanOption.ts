@@ -8,31 +8,31 @@ import {
 } from "../../../types/types.js";
 import { CommandOption } from "./CommandOption.js";
 
-export class StringOption<
+export class BooleanOption<
   Name extends string,
   Required extends boolean = false,
   TransformType extends
-    | (SingleTransformer<string> | AsyncSingleTransformer<string>)
-    | undefined = (value: string) => Ok<string, never>,
+    | (SingleTransformer<boolean> | AsyncSingleTransformer<boolean>)
+    | undefined = (value: boolean) => Ok<boolean, never>,
   MultiTransformType extends
-    | (MultiTransformer<Array<string>> | AsyncMultiTransformer<Array<string>>)
+    | (MultiTransformer<Array<boolean>> | AsyncMultiTransformer<Array<boolean>>)
     | undefined = undefined,
 > extends CommandOption<Name, Required, TransformType, MultiTransformType> {
-  type = ApplicationCommandOptionType.String as const;
+  type = ApplicationCommandOptionType.Boolean as const;
 
   declare useTransformer: <
     NewTransform extends
-      | SingleTransformer<string>
-      | AsyncSingleTransformer<string>,
+      | SingleTransformer<boolean>
+      | AsyncSingleTransformer<boolean>,
   >(
     transformer: NewTransform,
-  ) => StringOption<Name, Required, NewTransform, undefined>;
+  ) => BooleanOption<Name, Required, NewTransform, undefined>;
 
   declare useMultiTransformer: <
     NewTransform extends
-      | MultiTransformer<Array<string>>
-      | AsyncMultiTransformer<Array<string>>,
+      | MultiTransformer<Array<boolean>>
+      | AsyncMultiTransformer<Array<boolean>>,
   >(
     multiTransformer: NewTransform,
-  ) => StringOption<Name, Required, undefined, NewTransform>;
+  ) => BooleanOption<Name, Required, undefined, NewTransform>;
 }

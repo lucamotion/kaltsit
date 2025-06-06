@@ -6,7 +6,14 @@ import {
   Routes,
 } from "discord.js";
 import { parseOptions, transformCommands } from "../lib/commands.js";
-import { dataStore, UserOption } from "../main.js";
+import {
+  AttachmentOption,
+  BooleanOption,
+  ChannelOption,
+  dataStore,
+  NumberOption,
+  UserOption,
+} from "../main.js";
 import {
   type AnyCommand,
   type ContextMutator,
@@ -49,6 +56,7 @@ export class Bot<
     }
 
     // wait for command registration before handling interactions
+    // avoids accidentally accepting to stale commands
     await new Promise<void>((resolve, reject) => {
       this.once("ready", async (client) => {
         try {
@@ -201,8 +209,43 @@ export class Bot<
                 ...record,
                 [option.name]: option.role ?? undefined,
               };
+            } else if (
+              option.type === ApplicationCommandOptionType.Attachment &&
+              sourceCommandOption instanceof AttachmentOption
+            ) {
+              return <ParseOptionsInput<Command>>{
+                ...record,
+                [option.name]: option.attachment,
+              };
+            } else if (
+              option.type === ApplicationCommandOptionType.Channel &&
+              sourceCommandOption instanceof ChannelOption
+            ) {
+              return <ParseOptionsInput<Command>>{
+                ...record,
+                [option.name]: option.channel,
+              };
+            } else if (
+              option.type === ApplicationCommandOptionType.Boolean &&
+              sourceCommandOption instanceof BooleanOption
+            ) {
+              console.log(option.value);
+              console.log(typeof option.value);
+              return <ParseOptionsInput<Command>>{
+                ...record,
+                [option.name]: option.value,
+              };
+            } else if (
+              option.type === ApplicationCommandOptionType.Number &&
+              sourceCommandOption instanceof NumberOption
+            ) {
+              console.log(option.value);
+              console.log(typeof option.value);
+              return <ParseOptionsInput<Command>>{
+                ...record,
+                [option.name]: option.value,
+              };
             }
-
             return { ...record, [option.name]: option.value?.toString() };
           },
           {} as ParseOptionsInput<Command>,

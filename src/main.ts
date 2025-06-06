@@ -8,9 +8,13 @@ import { CommandWithSubcommandGroups } from "./structs/commands/CommandWithSubco
 import { CommandWithSubcommands } from "./structs/commands/CommandWithSubcommands.js";
 import { ComponentCommand } from "./structs/commands/ComponentCommand.js";
 import { ComponentSubcommand } from "./structs/commands/ComponentSubcommand.js";
+import { AttachmentOption } from "./structs/commands/options/AttachmentOption.js";
+import { BooleanOption } from "./structs/commands/options/BooleanOption.js";
+import { ChannelOption } from "./structs/commands/options/ChannelOption.js";
 import { CommandOption } from "./structs/commands/options/CommandOption.js";
+import { NumberOption } from "./structs/commands/options/NumberOption.js";
 import { RoleOption } from "./structs/commands/options/RoleOption.js";
-import { CommandStringOption } from "./structs/commands/options/StringOption.js";
+import { StringOption } from "./structs/commands/options/StringOption.js";
 import { UserOption } from "./structs/commands/options/UserOption.js";
 import { Subcommand } from "./structs/commands/Subcommand.js";
 import {
@@ -29,22 +33,26 @@ export const dataStore: Map<string, ParseOptionsInput<Command>> = new Map();
 export * from "discord.js";
 export * from "neverthrow";
 export {
+  AttachmentOption,
   BaseCommand,
+  BooleanOption,
   Bot,
+  ChannelOption,
   Command,
   CommandContext,
   CommandManager,
   CommandOption,
-  CommandStringOption,
   CommandWithSubcommandGroups,
   CommandWithSubcommands,
   ComponentCommand,
   ComponentSubcommand,
   KaltsitError,
+  NumberOption,
   PermissionsError,
   RoleOption,
   RoleSelectBuilder,
   SelectBuilder,
+  StringOption,
   Subcommand,
   TextInputBuilder,
   UserOption,

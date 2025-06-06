@@ -20,15 +20,15 @@ type Transformer<
 > = (value: Input, ctx: TransformerContext) => Output;
 
 export type SingleTransformer<
-  Input = string,
+  Input extends any,
   Output extends Result<any, any> = Result<any, any>,
 > = Transformer<Input, Output>;
 export type AsyncSingleTransformer<
-  Input = string,
+  Input extends any,
   Output extends Result<any, any> = Result<any, any>,
 > = Transformer<Input, Promise<Output>>;
 export type MultiTransformer<
-  Input = Array<string>,
+  Input extends Array<any>,
   Output extends Result<unknown, unknown> = Result<unknown, unknown>,
 > = Transformer<Input, Output>;
 export type AsyncMultiTransformer<
@@ -57,10 +57,10 @@ type OptionalizeIfNotRequired<
 
 type InferTransformerOutput<
   T extends
-    | MultiTransformer
-    | AsyncMultiTransformer
-    | SingleTransformer
-    | AsyncSingleTransformer
+    | MultiTransformer<Array<any>>
+    | AsyncMultiTransformer<Array<any>>
+    | SingleTransformer<any>
+    | AsyncSingleTransformer<any>
     | undefined,
 > =
   T extends MultiTransformer<any, infer MultiOutput>
@@ -89,14 +89,14 @@ type BaseCommandOption =
   | CommandOption<
       string,
       boolean,
-      SingleTransformer | AsyncSingleTransformer,
+      SingleTransformer<any> | AsyncSingleTransformer<any>,
       undefined
     >
   | CommandOption<
       string,
       boolean,
       undefined,
-      MultiTransformer | AsyncMultiTransformer
+      MultiTransformer<Array<any>> | AsyncMultiTransformer<Array<any>>
     >;
 
 /** Generates an input type from {@link Command.options} for use in {@link parseOptions} */
