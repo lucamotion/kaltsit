@@ -1,6 +1,6 @@
 # kaltsit
 
-An opinionated Discord bot framework where _everything_ is a command. Pronounced "cal-sit."
+An opinionated Discord bot framework where _everything_ is a command. Pronounced "cal-seat."
 
 Currently, Kaltsit only supports slash commands. Legacy message commands are not supported.
 
