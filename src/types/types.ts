@@ -1,9 +1,10 @@
 import { type Ok, type Result } from "neverthrow";
-import { type CommandContext, type Subcommand } from "../main.js";
 import { type Command } from "../structs/commands/Command.js";
+import { CommandContext } from "../structs/commands/CommandContext.js";
 import { type CommandWithSubcommandGroups } from "../structs/commands/CommandWithSubcommandGroups.js";
 import { type CommandWithSubcommands } from "../structs/commands/CommandWithSubcommands.js";
 import { type CommandOption } from "../structs/commands/options/CommandOption.js";
+import { Subcommand } from "../structs/commands/Subcommand.js";
 import { TransformerContext } from "../structs/commands/TransformerContext.js";
 
 export type ContextMutator<SourceCommand extends Command> = (

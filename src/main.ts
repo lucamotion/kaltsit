@@ -1,6 +1,5 @@
 import "dotenv/config";
 import { Bot } from "./structs/Bot.js";
-import { BaseCommand } from "./structs/commands/BaseCommand.js";
 import { Command } from "./structs/commands/Command.js";
 import { CommandContext } from "./structs/commands/CommandContext.js";
 import { CommandManager } from "./structs/commands/CommandManager.js";
@@ -26,15 +25,12 @@ import {
   RoleSelectBuilder,
   SelectBuilder,
 } from "./structs/select/SelectBuilder.js";
-import { ParseOptionsInput, Precondition } from "./types/types.js";
-
-export const dataStore: Map<string, ParseOptionsInput<Command>> = new Map();
+import { Precondition } from "./types/types.js";
 
 export * from "discord.js";
 export * from "neverthrow";
 export {
   AttachmentOption,
-  BaseCommand,
   BooleanOption,
   Bot,
   ChannelOption,

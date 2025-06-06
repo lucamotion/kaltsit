@@ -10,15 +10,7 @@ import {
   resolveCommandFromInteraction,
   transformCommands,
 } from "../lib/commands.js";
-import {
-  AttachmentOption,
-  BooleanOption,
-  ChannelOption,
-  dataStore,
-  NumberOption,
-  StringOption,
-  UserOption,
-} from "../main.js";
+import { dataStore } from "../lib/dataStore.js";
 import {
   type AnyCommand,
   type ContextMutator,
@@ -27,7 +19,13 @@ import {
 import { Command } from "./commands/Command.js";
 import { CommandContext } from "./commands/CommandContext.js";
 import { type CommandManager } from "./commands/CommandManager.js";
+import { AttachmentOption } from "./commands/options/AttachmentOption.js";
+import { BooleanOption } from "./commands/options/BooleanOption.js";
+import { ChannelOption } from "./commands/options/ChannelOption.js";
+import { NumberOption } from "./commands/options/NumberOption.js";
 import { RoleOption } from "./commands/options/RoleOption.js";
+import { StringOption } from "./commands/options/StringOption.js";
+import { UserOption } from "./commands/options/UserOption.js";
 import { TransformerContext } from "./commands/TransformerContext.js";
 import { KaltsitError } from "./error/KaltsitError.js";
 
