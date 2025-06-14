@@ -111,11 +111,11 @@ export async function parseOptions<SourceCommand extends Command>(
     const inputOption =
       options[commandOption.name as keyof ParseOptionsInput<SourceCommand>];
 
-    if (!inputOption && commandOption.required) {
+    if (inputOption === undefined && commandOption.required) {
       return err(
         `Missing required argument ${commandOption.name} in ${command.name}`,
       );
-    } else if (!inputOption) {
+    } else if (inputOption === undefined) {
       resultOptions[commandOption.name] = ok(undefined);
       continue;
     }
