@@ -302,7 +302,17 @@ export class Bot<
         }
       }
 
-      await command.execute(commandContext);
+      const result = await command.execute(commandContext);
+
+      if (result.isOk()) {
+        return;
+      }
+
+      const error = result.error;
+      // TODO: proper error logging... maybe use an event handler?
+      // commands should handle logic errors, etc. themselves,
+      // so this should mostly be 4XX/5XX errors from discord
+      console.error(error);
     });
 
     return token;

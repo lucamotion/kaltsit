@@ -1,4 +1,5 @@
 import { type InteractionContextType } from "discord.js";
+import { Result } from "neverthrow";
 import { dataStore } from "../../lib/dataStore.js";
 import { generateCommandId } from "../../lib/ids.js";
 import {
@@ -53,7 +54,9 @@ export abstract class Command<
   /**
    * The function to execute when the command is invoked.
    */
-  abstract execute(ctx: CommandContext<Command<Self>>): Promise<unknown>;
+  abstract execute(
+    ctx: CommandContext<Command<Self>>,
+  ): Promise<Result<void, Error>>;
 
   constructor() {
     super();
