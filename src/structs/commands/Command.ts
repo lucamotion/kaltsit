@@ -56,7 +56,7 @@ export abstract class Command<
    */
   abstract execute(
     ctx: CommandContext<Command<Self>>,
-  ): Promise<Result<void, Error>>;
+  ): Promise<Result<unknown, Error>>;
 
   constructor() {
     super();
