@@ -7,12 +7,14 @@ import {
   Guild,
   type InteractionEditReplyOptions,
   type InteractionReplyOptions,
+  Message,
   type MessageFlags,
   MessagePayload,
   type ModalBuilder,
   type ModalSubmitInteraction,
   type User,
 } from "discord.js";
+import { err, ok, Result } from "neverthrow";
 import { type CommandOptionsResult } from "../../types/types.js";
 import { type Command } from "./Command.js";
 
@@ -45,55 +47,136 @@ export class CommandContext<SourceCommand extends Command> {
     this.guild = interaction.guild;
   }
 
-  public async deferEdit() {
-    if (this.interaction.isChatInputCommand()) {
-      await this.defer();
-    } else {
-      await this.interaction.deferUpdate();
+  public async deferEdit(): Promise<Result<void, Error>> {
+    try {
+      if (this.interaction.isChatInputCommand()) {
+        await this.defer();
+        return ok();
+      } else {
+        await this.interaction.deferUpdate();
+        return ok();
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        return err(e);
+      } else {
+        console.error(e);
+        return err(
+          new Error(
+            "An unexpected error occurred. It has been logged to the console.",
+          ),
+        );
+      }
     }
-
-    return;
   }
 
   public async defer(
     flags?: BitFieldResolvable<"Ephemeral", MessageFlags.Ephemeral>,
-  ) {
+  ): Promise<Result<void, Error>> {
     if (this.interaction.deferred) {
-      return;
+      return ok();
     }
 
-    await this.interaction.deferReply({ flags });
-    return;
-  }
-
-  public async send(payload: InteractionReplyOptions) {
-    if (this.interaction.deferred) {
-      const message = await this.interaction.followUp(payload);
-      return message;
-    } else {
-      const response = await this.interaction.reply(payload);
-      const message = await response.fetch();
-      return message;
+    try {
+      await this.interaction.deferReply({ flags });
+      return ok();
+    } catch (e) {
+      if (e instanceof Error) {
+        return err(e);
+      } else {
+        console.error(e);
+        return err(
+          new Error(
+            "An unexpected error occurred. It has been logged to the console.",
+          ),
+        );
+      }
     }
   }
 
-  public async edit(payload: InteractionEditReplyOptions) {
+  public async send(
+    payload: InteractionReplyOptions,
+  ): Promise<Result<Message<boolean>, Error>> {
+    try {
+      if (this.interaction.deferred) {
+        const message = await this.interaction.followUp(payload);
+        return ok(message);
+      } else {
+        const response = await this.interaction.reply(payload);
+        const message = await response.fetch();
+        return ok(message);
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        return err(e);
+      } else {
+        console.error(e);
+        return err(
+          new Error(
+            "An unexpected error occurred. It has been logged to the console.",
+          ),
+        );
+      }
+    }
+  }
+
+  public async edit(
+    payload: InteractionEditReplyOptions,
+  ): Promise<Result<void, Error>> {
     const normalizedPayload = new MessagePayload(this.interaction, payload);
 
-    if (this.interaction.isModalSubmit() && !this.interaction.isFromMessage()) {
-      await this.interaction.followUp(normalizedPayload);
-    } else {
-      await this.interaction.editReply(normalizedPayload);
+    try {
+      if (
+        this.interaction.isModalSubmit() &&
+        !this.interaction.isFromMessage()
+      ) {
+        await this.interaction.followUp(normalizedPayload);
+        return ok();
+      } else {
+        await this.interaction.editReply(normalizedPayload);
+        return ok();
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        return err(e);
+      } else {
+        console.error(e);
+        return err(
+          new Error(
+            "An unexpected error occurred. It has been logged to the console.",
+          ),
+        );
+      }
     }
   }
 
-  public async sendModal(modal: ModalBuilder) {
-    if (
-      this.interaction.isChatInputCommand() ||
-      this.interaction.isAnySelectMenu() ||
-      this.interaction.isButton()
-    ) {
-      await this.interaction.showModal(modal);
+  public async sendModal(modal: ModalBuilder): Promise<Result<void, Error>> {
+    try {
+      if (
+        this.interaction.isChatInputCommand() ||
+        this.interaction.isAnySelectMenu() ||
+        this.interaction.isButton()
+      ) {
+        await this.interaction.showModal(modal);
+        return ok();
+      } else {
+        return err(
+          new Error(
+            `Cannot send modal on incompatible interaction type ${this.interaction.type}`,
+          ),
+        );
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        return err(e);
+      } else {
+        console.error(e);
+        return err(
+          new Error(
+            "An unexpected error occurred. It has been logged to the console.",
+          ),
+        );
+      }
     }
   }
 }
