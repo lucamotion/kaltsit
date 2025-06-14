@@ -133,7 +133,18 @@ export class CommandContext<SourceCommand extends Command> {
         await this.interaction.followUp(normalizedPayload);
         return ok();
       } else {
-        await this.interaction.editReply(normalizedPayload);
+        if (this.interaction.deferred) {
+          await this.interaction.editReply(normalizedPayload);
+        } else {
+          if (
+            this.interaction.isMessageComponent() ||
+            this.interaction.isModalSubmit()
+          ) {
+            await this.interaction.message.edit(normalizedPayload);
+          } else {
+            // ???
+          }
+        }
         return ok();
       }
     } catch (e) {
