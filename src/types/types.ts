@@ -13,7 +13,7 @@ export type ContextMutator<SourceCommand extends Command> = (
 
 export type Precondition<SourceCommand extends Command> = (
   ctx: CommandContext<SourceCommand>,
-) => Promise<Result<true, Error>>;
+) => Promise<Result<boolean, Error>>;
 
 type Transformer<
   Input,

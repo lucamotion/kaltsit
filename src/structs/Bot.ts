@@ -299,6 +299,9 @@ export class Bot<
           }
 
           return;
+        } else if (result.value !== true) {
+          // precondition did not pass, but precondition handled failure
+          return;
         }
       }
 
