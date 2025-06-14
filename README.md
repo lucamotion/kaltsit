@@ -37,7 +37,7 @@ The `ComponentCommand` and `ComponentSubcommand` classes are provided for comman
 
 ### Transformers
 
-Often, you will run into scenarios where the value of a command option needs to be processed to get what you _really_ want. Transformers provide a portable, reusable, and type-safe way to share this logic between many commands - don't repeat yourself!
+Often, you will run into scenarios where the value of a command option needs to be processed to get what you _really_ want. Transformers provide a reusable, and type-safe way to share this logic between many commands - don't repeat yourself!
 
 To illustrate this, suppose you are developing a game in a Discord bot. You want to add a `/profile` command that displays player data beyond what the Discord API provides. Normally, you would need to provide a `UserOption` and fetch the player's data from the `User`'s ID in your command execution code.
 
