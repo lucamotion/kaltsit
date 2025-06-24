@@ -10,6 +10,7 @@ import {
   Message,
   type MessageFlags,
   MessagePayload,
+  MessageResolvable,
   type ModalBuilder,
   type ModalSubmitInteraction,
   type User,
@@ -140,7 +141,11 @@ export class CommandContext<SourceCommand extends Command> {
             this.interaction.isMessageComponent() ||
             this.interaction.isModalSubmit()
           ) {
-            await this.interaction.message.edit(normalizedPayload);
+            await this.interaction.deferUpdate();
+            await this.interaction.editReply({
+              ...payload,
+              message: this.interaction.message,
+            });
           } else {
             // ???
           }
@@ -188,6 +193,20 @@ export class CommandContext<SourceCommand extends Command> {
           ),
         );
       }
+    }
+  }
+
+  public async delete(reply?: MessageResolvable): Promise<Result<void, Error>> {
+    try {
+      await this.interaction.deleteReply(reply);
+      return ok();
+    } catch (e) {
+      console.error(e);
+      return err(
+        new Error(
+          "An unexpected error occurred. It has been logged to the console.",
+        ),
+      );
     }
   }
 }
