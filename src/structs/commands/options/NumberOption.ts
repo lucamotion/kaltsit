@@ -6,7 +6,7 @@ import {
   type MultiTransformer,
   type SingleTransformer,
 } from "../../../types/types.js";
-import { CommandOption } from "./CommandOption.js";
+import { BaseOption } from "./BaseOption.js";
 
 export class NumberOption<
   Name extends string,
@@ -17,7 +17,7 @@ export class NumberOption<
   MultiTransformType extends
     | (MultiTransformer<Array<number>> | AsyncMultiTransformer<Array<number>>)
     | undefined = undefined,
-> extends CommandOption<Name, Required, TransformType, MultiTransformType> {
+> extends BaseOption<Name, Required, TransformType, MultiTransformType> {
   type = ApplicationCommandOptionType.Number as const;
 
   declare useTransformer: <

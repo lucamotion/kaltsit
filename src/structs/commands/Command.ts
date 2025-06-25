@@ -12,7 +12,7 @@ import {
 } from "../../types/types.js";
 import { BaseCommand } from "./BaseCommand.js";
 import { type CommandContext } from "./CommandContext.js";
-import { type CommandOption } from "./options/CommandOption.js";
+import { type BaseOption } from "./options/BaseOption.js";
 
 export abstract class Command<
   Self extends Command<Self> = any,
@@ -27,13 +27,13 @@ export abstract class Command<
    * The options of the command.
    */
   abstract options: ReadonlyArray<
-    | CommandOption<
+    | BaseOption<
         any,
         boolean,
         SingleTransformer<any> | AsyncSingleTransformer<any>,
         undefined
       >
-    | CommandOption<
+    | BaseOption<
         any,
         boolean,
         undefined,

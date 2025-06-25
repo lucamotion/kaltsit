@@ -3,7 +3,7 @@ import { type Command } from "../structs/commands/Command.js";
 import { CommandContext } from "../structs/commands/CommandContext.js";
 import { type CommandWithSubcommandGroups } from "../structs/commands/CommandWithSubcommandGroups.js";
 import { type CommandWithSubcommands } from "../structs/commands/CommandWithSubcommands.js";
-import { type CommandOption } from "../structs/commands/options/CommandOption.js";
+import { type BaseOption } from "../structs/commands/options/BaseOption.js";
 import { Subcommand } from "../structs/commands/Subcommand.js";
 import { TransformerContext } from "../structs/commands/TransformerContext.js";
 
@@ -87,13 +87,13 @@ export type CommandOptionsResult<
 };
 
 type BaseCommandOption =
-  | CommandOption<
+  | BaseOption<
       string,
       boolean,
       SingleTransformer<any> | AsyncSingleTransformer<any>,
       undefined
     >
-  | CommandOption<
+  | BaseOption<
       string,
       boolean,
       undefined,

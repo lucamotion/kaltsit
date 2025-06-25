@@ -74,12 +74,11 @@ export class Bot<
               );
 
           await client.rest.put(commandRoute, { body: commands });
+          resolve();
         } catch (error) {
           reject(error);
           process.exit(1);
         }
-
-        resolve();
       });
 
       this.login(token).catch((error) => {

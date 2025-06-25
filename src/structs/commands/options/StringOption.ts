@@ -10,7 +10,7 @@ import {
   type SingleTransformer,
 } from "../../../types/types.js";
 import { TransformerContext } from "../TransformerContext.js";
-import { CommandOption } from "./CommandOption.js";
+import { BaseOption } from "./BaseOption.js";
 
 export class StringOption<
   Name extends string,
@@ -21,7 +21,7 @@ export class StringOption<
   MultiTransformType extends
     | (MultiTransformer<Array<string>> | AsyncMultiTransformer<Array<string>>)
     | undefined = undefined,
-> extends CommandOption<Name, Required, TransformType, MultiTransformType> {
+> extends BaseOption<Name, Required, TransformType, MultiTransformType> {
   type = ApplicationCommandOptionType.String as const;
   autocomplete: boolean = false;
   executeAutocomplete?: (

@@ -7,7 +7,7 @@ import {
   type SingleTransformer,
 } from "../../../types/types.js";
 import { TransformerContext } from "../TransformerContext.js";
-import { CommandOption } from "./CommandOption.js";
+import { BaseOption } from "./BaseOption.js";
 
 export class RoleOption<
   Name extends string,
@@ -24,7 +24,7 @@ export class RoleOption<
         | AsyncMultiTransformer<Array<RoleResolvable>>
       )
     | undefined = undefined,
-> extends CommandOption<Name, Required, TransformType, MultiTransformType> {
+> extends BaseOption<Name, Required, TransformType, MultiTransformType> {
   type = ApplicationCommandOptionType.Role as const;
 
   transform = (async (

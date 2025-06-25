@@ -21,7 +21,7 @@ import { type Command } from "./Command.js";
 
 export class CommandContext<SourceCommand extends Command> {
   private client: Client;
-  private interaction:
+  public interaction:
     | ChatInputCommandInteraction
     | ButtonInteraction
     | AnySelectMenuInteraction
@@ -152,6 +152,41 @@ export class CommandContext<SourceCommand extends Command> {
         }
         return ok();
       }
+    } catch (e) {
+      if (e instanceof Error) {
+        return err(e);
+      } else {
+        console.error(e);
+        return err(
+          new Error(
+            "An unexpected error occurred. It has been logged to the console.",
+          ),
+        );
+      }
+    }
+  }
+
+  public async editElseSend(
+    payload: InteractionEditReplyOptions,
+  ): Promise<Result<void, Error>> {
+    const normalizedPayload = new MessagePayload(this.interaction, payload);
+
+    try {
+      if (this.interaction.isMessageComponent()) {
+        if (!this.interaction.deferred) {
+          await this.interaction.deferUpdate();
+          await this.interaction.editReply(normalizedPayload);
+        } else {
+          await this.interaction.followUp(normalizedPayload);
+        }
+      } else {
+        if (!this.interaction.deferred) {
+          await this.interaction.reply(normalizedPayload);
+        } else {
+          await this.interaction.followUp(normalizedPayload);
+        }
+      }
+      return ok();
     } catch (e) {
       if (e instanceof Error) {
         return err(e);

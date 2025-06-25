@@ -7,7 +7,7 @@ import {
   type SingleTransformer,
 } from "../../../types/types.js";
 import { TransformerContext } from "../TransformerContext.js";
-import { CommandOption } from "./CommandOption.js";
+import { BaseOption } from "./BaseOption.js";
 
 export class UserOption<
   Name extends string,
@@ -24,7 +24,7 @@ export class UserOption<
         | AsyncMultiTransformer<Array<UserResolvable>>
       )
     | undefined = undefined,
-> extends CommandOption<Name, Required, TransformType, MultiTransformType> {
+> extends BaseOption<Name, Required, TransformType, MultiTransformType> {
   type = ApplicationCommandOptionType.User as const;
 
   transform = (async (

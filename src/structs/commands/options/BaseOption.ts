@@ -12,7 +12,7 @@ import type {
 } from "../../../types/types.js";
 import { TransformerContext } from "../TransformerContext.js";
 
-export class CommandOption<
+export class BaseOption<
   Name extends string,
   Required extends boolean = false,
   TransformType extends
@@ -41,10 +41,10 @@ export class CommandOption<
       | AsyncSingleTransformer<any, any>,
   >(
     transformer: NewTransform,
-  ): CommandOption<Name, Required, NewTransform, undefined> => {
+  ): BaseOption<Name, Required, NewTransform, undefined> => {
     this.multiTransform = undefined as MultiTransformType;
     this.transform = transformer as unknown as TransformType;
-    return this as unknown as CommandOption<
+    return this as unknown as BaseOption<
       Name,
       Required,
       NewTransform,
@@ -58,10 +58,10 @@ export class CommandOption<
       | AsyncMultiTransformer<any, any>,
   >(
     multiTransformer: NewTransform,
-  ): CommandOption<Name, Required, undefined, NewTransform> => {
+  ): BaseOption<Name, Required, undefined, NewTransform> => {
     this.multiTransform = multiTransformer as unknown as MultiTransformType;
     this.transform = undefined as TransformType;
-    return this as unknown as CommandOption<
+    return this as unknown as BaseOption<
       Name,
       Required,
       undefined,
