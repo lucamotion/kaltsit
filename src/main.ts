@@ -16,10 +16,6 @@ import { RoleOption } from "./structs/commands/options/RoleOption.js";
 import { StringOption } from "./structs/commands/options/StringOption.js";
 import { UserOption } from "./structs/commands/options/UserOption.js";
 import { Subcommand } from "./structs/commands/Subcommand.js";
-import {
-  KaltsitError,
-  PermissionsError,
-} from "./structs/error/KaltsitError.js";
 import { TextInputBuilder } from "./structs/modal/TextInputBuilder.js";
 import {
   RoleSelectBuilder,
@@ -42,9 +38,7 @@ export {
   CommandWithSubcommands,
   ComponentCommand,
   ComponentSubcommand,
-  KaltsitError,
   NumberOption,
-  PermissionsError,
   RoleOption,
   RoleSelectBuilder,
   SelectBuilder,

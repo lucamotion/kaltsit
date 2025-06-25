@@ -27,7 +27,6 @@ import { RoleOption } from "./commands/options/RoleOption.js";
 import { StringOption } from "./commands/options/StringOption.js";
 import { UserOption } from "./commands/options/UserOption.js";
 import { TransformerContext } from "./commands/TransformerContext.js";
-import { KaltsitError } from "./error/KaltsitError.js";
 
 export class Bot<
   Commands extends ReadonlyArray<AnyCommand> = ReadonlyArray<AnyCommand>,
@@ -293,7 +292,7 @@ export class Bot<
         if (result.isErr()) {
           const error = result.error;
 
-          if (error instanceof KaltsitError) {
+          if (error instanceof Error) {
             await interaction.reply({ content: error.message });
           }
 
