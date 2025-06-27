@@ -12,6 +12,7 @@ import { BaseOption } from "./BaseOption.js";
 export class UserOption<
   Name extends string,
   Required extends boolean = false,
+  Internal extends boolean = false,
   TransformType extends
     | (
         | SingleTransformer<UserResolvable>
@@ -24,7 +25,13 @@ export class UserOption<
         | AsyncMultiTransformer<Array<UserResolvable>>
       )
     | undefined = undefined,
-> extends BaseOption<Name, Required, TransformType, MultiTransformType> {
+> extends BaseOption<
+  Name,
+  Required,
+  Internal,
+  TransformType,
+  MultiTransformType
+> {
   type = ApplicationCommandOptionType.User as const;
 
   transform = (async (
@@ -49,7 +56,7 @@ export class UserOption<
       | AsyncSingleTransformer<UserResolvable>,
   >(
     transformer: NewTransform,
-  ) => UserOption<Name, Required, NewTransform, undefined>;
+  ) => UserOption<Name, Required, Internal, NewTransform, undefined>;
 
   declare useMultiTransformer: <
     NewTransform extends
@@ -57,5 +64,5 @@ export class UserOption<
       | AsyncMultiTransformer<Array<UserResolvable>>,
   >(
     multiTransformer: NewTransform,
-  ) => UserOption<Name, Required, undefined, NewTransform>;
+  ) => UserOption<Name, Required, Internal, undefined, NewTransform>;
 }

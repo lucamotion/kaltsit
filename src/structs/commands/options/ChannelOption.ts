@@ -17,6 +17,7 @@ import { BaseOption } from "./BaseOption.js";
 export class ChannelOption<
   Name extends string,
   Required extends boolean = false,
+  Internal extends boolean = false,
   TransformType extends
     | (
         | SingleTransformer<ChannelResolvable>
@@ -32,7 +33,13 @@ export class ChannelOption<
         | AsyncMultiTransformer<Array<ChannelResolvable>>
       )
     | undefined = undefined,
-> extends BaseOption<Name, Required, TransformType, MultiTransformType> {
+> extends BaseOption<
+  Name,
+  Required,
+  Internal,
+  TransformType,
+  MultiTransformType
+> {
   type = ApplicationCommandOptionType.Channel as const;
 
   transform = (async (
@@ -58,7 +65,7 @@ export class ChannelOption<
       | AsyncSingleTransformer<ChannelResolvable>,
   >(
     transformer: NewTransform,
-  ) => ChannelOption<Name, Required, NewTransform, undefined>;
+  ) => ChannelOption<Name, Required, Internal, NewTransform, undefined>;
 
   declare useMultiTransformer: <
     NewTransform extends
@@ -66,5 +73,5 @@ export class ChannelOption<
       | AsyncMultiTransformer<Array<ChannelResolvable>>,
   >(
     multiTransformer: NewTransform,
-  ) => ChannelOption<Name, Required, undefined, NewTransform>;
+  ) => ChannelOption<Name, Required, Internal, undefined, NewTransform>;
 }

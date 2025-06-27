@@ -12,6 +12,7 @@ import { BaseOption } from "./BaseOption.js";
 export class AttachmentOption<
   Name extends string,
   Required extends boolean = false,
+  Internal extends boolean = false,
   TransformType extends
     | (SingleTransformer<Attachment> | AsyncSingleTransformer<Attachment>)
     | undefined = AsyncSingleTransformer<Attachment, Result<Attachment, Error>>,
@@ -21,7 +22,13 @@ export class AttachmentOption<
         | AsyncMultiTransformer<Array<Attachment>>
       )
     | undefined = undefined,
-> extends BaseOption<Name, Required, TransformType, MultiTransformType> {
+> extends BaseOption<
+  Name,
+  Required,
+  Internal,
+  TransformType,
+  MultiTransformType
+> {
   type = ApplicationCommandOptionType.Attachment as const;
 
   transform = (async (
@@ -37,7 +44,7 @@ export class AttachmentOption<
       | AsyncSingleTransformer<Attachment>,
   >(
     transformer: NewTransform,
-  ) => AttachmentOption<Name, Required, NewTransform, undefined>;
+  ) => AttachmentOption<Name, Required, Internal, NewTransform, undefined>;
 
   declare useMultiTransformer: <
     NewTransform extends
@@ -45,5 +52,5 @@ export class AttachmentOption<
       | AsyncMultiTransformer<Array<Attachment>>,
   >(
     multiTransformer: NewTransform,
-  ) => AttachmentOption<Name, Required, undefined, NewTransform>;
+  ) => AttachmentOption<Name, Required, Internal, undefined, NewTransform>;
 }

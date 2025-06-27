@@ -12,6 +12,7 @@ import { BaseOption } from "./BaseOption.js";
 export class RoleOption<
   Name extends string,
   Required extends boolean = false,
+  Internal extends boolean = false,
   TransformType extends
     | (
         | SingleTransformer<RoleResolvable>
@@ -24,7 +25,13 @@ export class RoleOption<
         | AsyncMultiTransformer<Array<RoleResolvable>>
       )
     | undefined = undefined,
-> extends BaseOption<Name, Required, TransformType, MultiTransformType> {
+> extends BaseOption<
+  Name,
+  Required,
+  Internal,
+  TransformType,
+  MultiTransformType
+> {
   type = ApplicationCommandOptionType.Role as const;
 
   transform = (async (
@@ -54,7 +61,7 @@ export class RoleOption<
       | AsyncSingleTransformer<RoleResolvable>,
   >(
     transformer: NewTransform,
-  ) => RoleOption<Name, Required, NewTransform, undefined>;
+  ) => RoleOption<Name, Required, Internal, NewTransform, undefined>;
 
   declare useMultiTransformer: <
     NewTransform extends
@@ -62,5 +69,5 @@ export class RoleOption<
       | AsyncMultiTransformer<Array<RoleResolvable>>,
   >(
     multiTransformer: NewTransform,
-  ) => RoleOption<Name, Required, undefined, NewTransform>;
+  ) => RoleOption<Name, Required, Internal, undefined, NewTransform>;
 }

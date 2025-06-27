@@ -15,6 +15,7 @@ import { TransformerContext } from "../TransformerContext.js";
 export class BaseOption<
   Name extends string,
   Required extends boolean = false,
+  Internal extends boolean = false,
   TransformType extends
     | (SingleTransformer<any> | AsyncSingleTransformer<any>)
     | undefined = (value: string) => Ok<string, never>,
@@ -28,6 +29,7 @@ export class BaseOption<
     ok(value)) as TransformType;
   multiTransform: MultiTransformType = undefined as MultiTransformType;
   type!: ApplicationCommandOptionType;
+  internal: boolean = false;
 
   constructor(name: Name, required?: Required) {
     super();
@@ -41,12 +43,13 @@ export class BaseOption<
       | AsyncSingleTransformer<any, any>,
   >(
     transformer: NewTransform,
-  ): BaseOption<Name, Required, NewTransform, undefined> => {
+  ): BaseOption<Name, Required, Internal, NewTransform, undefined> => {
     this.multiTransform = undefined as MultiTransformType;
     this.transform = transformer as unknown as TransformType;
     return this as unknown as BaseOption<
       Name,
       Required,
+      Internal,
       NewTransform,
       undefined
     >;
@@ -58,14 +61,28 @@ export class BaseOption<
       | AsyncMultiTransformer<any, any>,
   >(
     multiTransformer: NewTransform,
-  ): BaseOption<Name, Required, undefined, NewTransform> => {
+  ): BaseOption<Name, Required, Internal, undefined, NewTransform> => {
     this.multiTransform = multiTransformer as unknown as MultiTransformType;
     this.transform = undefined as TransformType;
     return this as unknown as BaseOption<
       Name,
       Required,
+      Internal,
       undefined,
       NewTransform
+    >;
+  };
+
+  setInternal = <NewInternal extends Required extends true ? false : boolean>(
+    internal: NewInternal,
+  ) => {
+    this.internal = internal;
+    return this as BaseOption<
+      Name,
+      Required,
+      NewInternal,
+      TransformType,
+      MultiTransformType
     >;
   };
 
