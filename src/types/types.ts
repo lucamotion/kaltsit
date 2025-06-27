@@ -90,11 +90,13 @@ type BaseCommandOption =
   | BaseOption<
       string,
       boolean,
+      boolean,
       SingleTransformer<any> | AsyncSingleTransformer<any>,
       undefined
     >
   | BaseOption<
       string,
+      boolean,
       boolean,
       undefined,
       MultiTransformer<Array<any>> | AsyncMultiTransformer<Array<any>>

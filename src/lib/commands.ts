@@ -32,7 +32,9 @@ export function transformCommands(
         type: ApplicationCommandType.ChatInput,
         name: command.name,
         description: command.description,
-        options: command.options.map((option) => option.toJSON()),
+        options: command.options
+          .filter((option) => option.internal !== true)
+          .map((option) => option.toJSON()),
         contexts: command.contexts,
       } satisfies RESTPostAPIChatInputApplicationCommandsJSONBody);
       continue;
@@ -56,7 +58,9 @@ export function transformCommands(
           type: ApplicationCommandOptionType.Subcommand,
           name: subcommand.name,
           description: subcommand.description,
-          options: subcommand.options.map((option) => option.toJSON()),
+          options: subcommand.options
+            .filter((option) => option.internal !== true)
+            .map((option) => option.toJSON()),
         })),
       } satisfies RESTPostAPIChatInputApplicationCommandsJSONBody);
       continue;
@@ -89,7 +93,9 @@ export function transformCommands(
               type: ApplicationCommandOptionType.Subcommand,
               name: subcommand.name,
               description: subcommand.description,
-              options: subcommand.options.map((option) => option.toJSON()),
+              options: subcommand.options
+                .filter((option) => option.internal !== true)
+                .map((option) => option.toJSON()),
             })),
         })),
       } satisfies RESTPostAPIChatInputApplicationCommandsJSONBody);

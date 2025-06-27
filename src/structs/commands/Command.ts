@@ -30,11 +30,13 @@ export abstract class Command<
     | BaseOption<
         any,
         boolean,
+        boolean,
         SingleTransformer<any> | AsyncSingleTransformer<any>,
         undefined
       >
     | BaseOption<
         any,
+        boolean,
         boolean,
         undefined,
         MultiTransformer<any> | AsyncMultiTransformer<any>
